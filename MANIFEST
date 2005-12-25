@@ -1,10 +1,14 @@
 Changes
 MANIFEST
-META.yml # Will be created by "make dist"
+META.yml
 Makefile.PL
 README
 lib/Text/Same.pm
+lib/Text/Same/ChunkPair.pm
+lib/Text/Same/Chunk.pm
+lib/Text/Same/Match.pm
+lib/Text/Same/Process.pm
+scripts/same
 t/00-load.t
-t/boilerplate.t
 t/pod-coverage.t
 t/pod.t

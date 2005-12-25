@@ -7,6 +7,7 @@ use Carp;
 use Text::Same::Match;
 use Text::Same::Chunk;
 use Text::Same::ChunkPair;
+use Text::Same::MatchMap;
 
 sub get_chunk_hash
 {
@@ -110,7 +111,9 @@ sub process
   my %ch1 = get_chunk_hash(@$ar1);
   my %ch2 = get_chunk_hash(@$ar2);
 
-  return find_matches @chunks1, %ch1, @chunks2, %ch2;
+  my @matches = find_matches @chunks1, %ch1, @chunks2, %ch2;
+
+  return new Text::Same::MatchMap(matches=>\@matches);
 }
 
 1;

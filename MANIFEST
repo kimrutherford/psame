@@ -4,10 +4,14 @@ META.yml
 Makefile.PL
 README
 lib/Text/Same.pm
-lib/Text/Same/ChunkPair.pm
+lib/Text/Same/Cache.pm
 lib/Text/Same/Chunk.pm
+lib/Text/Same/ChunkPair.pm
+lib/Text/Same/ChunkedSource.pm
+lib/Text/Same/MatchMap.pm
 lib/Text/Same/Match.pm
 lib/Text/Same/Process.pm
+lib/Text/Same/Range.pm
 scripts/same
 t/00-load.t
 t/pod-coverage.t

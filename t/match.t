@@ -7,15 +7,15 @@ use Text::Same;
 my @t1 = qw{b c};
 my @t2 = qw{b c b c};
 
-my $matchmap = same \@t1, \@t2;
+my $matchmap = compare \@t1, \@t2;
 my @matches = $matchmap->matches;
 
 ok(scalar(@matches) == 2);
 
 my @sorted_matches = sort {
-  my $min1_cmp = $a->{min1} <=> $b->{min1}; 
+  my $min1_cmp = $a->min1 <=> $b->min1;
   if ($min1_cmp == 0) {
-    $a->{min2} <=> $b->{min2};
+    $a->min2 <=> $b->min2;
   } else {
     $min1_cmp;
   }
@@ -64,7 +64,7 @@ for $test_data (@test_data) {
   my $dir = $test_data->{dir};
   my $file1 = "t/data/$dir/file1";
   my $file2 = "t/data/$dir/file2";
-  my $matchmap = same $file1, $file2;
-  
+  my $matchmap = compare $file1, $file2;
+
   ok(scalar($matchmap->matches) == $test_data->{match_count});
 }

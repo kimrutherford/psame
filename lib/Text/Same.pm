@@ -38,7 +38,7 @@ objects.
 
 use Exporter;
 @ISA = qw( Exporter );
-@EXPORT = qw( same );
+@EXPORT = qw( compare find );
 
 use warnings;
 use strict;
@@ -48,7 +48,7 @@ use Text::Same::Process;
 
 our $VERSION = '0.01';
 
-sub same {
+sub compare {
   my @seqs = ( shift, shift );
   my $options = shift || {};
 
@@ -87,7 +87,10 @@ sub same {
   return Text::Same::Process->process(@seqs);
 }
 
-
+sub find
+{
+  
+}
 
 
 

@@ -7,10 +7,10 @@ use Text::Same;
 my @l1 = qw{b c};
 my @l2 = qw{b c b c};
 
-my $matchmap = same(\@l1, \@l2);
+my $matchmap = compare(\@l1, \@l2);
 my @matches = $matchmap->matches;
 
-print "@matches\n";
+print "--- @matches\n";
 
 for my $match (@matches) {
   print "-----  ", $match->min1, "..", $match->max1, ", ", $match->min2, "..", $match->max2, "  ", $match->score(), "\n";

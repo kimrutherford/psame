@@ -8,18 +8,7 @@ use Text::Same::Match;
 use Text::Same::Chunk;
 use Text::Same::ChunkPair;
 use Text::Same::MatchMap;
-
-sub get_chunk_hash
-{
-  my %ret_hash = ();
-
-  for (my $i = 0; $i < @_; ++$i) {
-    my $chunk_text = $_[$i];
-    push @{$ret_hash{$chunk_text}}, new Text::Same::Chunk(text=>$chunk_text, indx=>$i);
-  }
-
-  return %ret_hash;
-}
+use Text::Same::Cache;
 
 sub process_hits($\%\@\@\@)
 {
@@ -55,14 +44,20 @@ sub process_hits($\%\@\@\@)
   }
 }
 
-sub find_matches(\@\%\@\%)
+sub find_matches($$)
 {
-  my ($car1, $chr1, $car2, $chr2) = @_;
+  my ($source1, $source2) = @_;
 
-  my @ca1 = @$car1;
-  my %ch1 = %$chr1;
-  my @ca2 = @$car2;
-  my %ch2 = %$chr2;
+  my @ca1 = $source1->get_all_chunks;
+  my %ch1 = $source1->get_chunk_hash;
+  my @ca2 = $source2->get_all_chunks;
+  my %ch2 = $source2->get_chunk_hash;
+
+#  print STDERR "source1: ", %$source1,"\n";
+#  print STDERR "@ca1 -=- @ca2\n";
+#  print STDERR "source2: ", %$source2,"\n";
+#  print STDERR "@ca1 -=- @ca2\n";
+
 
   my %seen_pairs = ();
 
@@ -76,44 +71,22 @@ sub find_matches(\@\%\@\%)
     }
   }
 
-  my @matches = values %seen_pairs;
-  my %uniq_matches = ();
-
-  for my $match (@matches) {
-    my @ranges = $match->ranges;
-    $uniq_matches{"@ranges"} = $match;
-  }
-
-  return values %uniq_matches;
+  return \%seen_pairs;
 }
-
-sub make_chunks
-{
-  my @chunks_text = @_;
-
-  my @ret = ();
-
-  for (my $i = 0; $i < scalar(@chunks_text); ++$i) {
-    push @ret, new Text::Same::Chunk(text=>$chunks_text[$i], indx=>$i);
-  }
-
-  return @ret;
-}
-
 
 sub process
 {
   my ($self, $ar1, $ar2) = @_;
 
-  my @chunks1 = make_chunks(@$ar1);
-  my @chunks2 = make_chunks(@$ar2);
+  my $cache = new Text::Same::Cache();
 
-  my %ch1 = get_chunk_hash(@$ar1);
-  my %ch2 = get_chunk_hash(@$ar2);
+  my $source1 = $cache->get($ar1);
+  my $source2 = $cache->get($ar2);
 
-  my @matches = find_matches @chunks1, %ch1, @chunks2, %ch2;
+  my $seen_pairs_ref = find_matches $source1, $source2;
 
-  return new Text::Same::MatchMap(matches=>\@matches);
+  return new Text::Same::MatchMap(source1=>$source1, source2=>$source2,
+                                  seen_pairs=>$seen_pairs_ref);
 }
 
 1;

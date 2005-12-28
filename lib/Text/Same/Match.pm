@@ -123,7 +123,7 @@ sub min1
   return $_[0]->{min1};
 }
 
-=head2 new
+=head2 min1
 
  Title   : min1
  Usage   : $match->add(@chunk_pairs);
@@ -158,7 +158,7 @@ sub pairs
   return $_[0]->{pairs};
 }
 
-=head2 acc
+=head2 score
 
  Title   : score
  Usage   : $acc = $seq->score;

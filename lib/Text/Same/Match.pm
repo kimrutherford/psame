@@ -7,6 +7,11 @@ Text::Same::Match
 Objects of this class represent a match between a group of lines in one file 
 to group of lines in another.
 
+=head1 SYNOPSIS
+
+  my @pairs = ($chunk_pair1, $chunk_pair2, ...);
+  my $match = new Text::Same::Match(@pairs);
+
 =head1 METHODS
 
 See below.  Methods private to this module are prefixed by an
@@ -38,7 +43,7 @@ use Carp;
  Title   : new
  Usage   : $match = new Text::Same::Match(@pairs)
  Function: Creates a new Match object from an array of ChunkPair objects
- Returns : An Text::Same::Match object
+ Returns : A Text::Same::Match object
  Args    : an array of ChunkPair objects
 
 =cut
@@ -64,15 +69,17 @@ sub new
 }
 
 
-=head2 new
+=head2 add
 
-Title   : add
-Usage   : $match->add(@chunk_pairs);
-Function: add ChunkPair objects to this objects - no checks are made that 
-          the new ChunkPairs are ajacent to the current pairs
-Returns : $self
-Args    : an array of ChunkPair objects
+ Title   : add
+ Usage   : $match->add(@chunk_pairs);
+ Function: add ChunkPair objects to this objects - no checks are made that 
+           the new ChunkPairs are ajacent to the current pairs
+ Returns : $self
+ Args    : an array of ChunkPair objects
+
 =cut
+
 sub add
 {
   my $self = shift;
@@ -108,45 +115,66 @@ sub _update_stats
 }
 
 
-=head2 new
+=head2 min1
 
- Title   : add
- Usage   : $match->add(@chunk_pairs);
- Function: add ChunkPair objects to this objects - no checks are made that 
-           the new ChunkPairs are ajacent to the current pairs
- Returns : $self
- Args    : an array of ChunkPair objects
+ Title   : min1
+ Usage   : $match->min1;
+ Function: return the minimum index of the chunks in the first of the 
+           ChunkedSources held in this Match
+ Args    : None
 
 =cut
+
 sub min1
 {
   return $_[0]->{min1};
 }
 
-=head2 min1
+=head2 max1
 
- Title   : min1
- Usage   : $match->add(@chunk_pairs);
- Function: add ChunkPair objects to this objects - no checks are made that 
-           the new ChunkPairs are ajacent to the current pairs
- Returns : $self
- Args    : an array of ChunkPair objects
+ Title   : max1
+ Usage   : $match->max1;
+ Function: return the maximum index of the chunks in the first of the 
+           ChunkedSources held in this Match
+ Args    : None
 
 =cut
+
 sub max1
 {
   return $_[0]->{max1};
 }
+
+=head2 min2
+
+ Title   : min2
+ Usage   : $match->min2;
+ Function: return the minimum index of the chunks in the second of the 
+           ChunkedSources held in this Match
+ Args    : None
+
+=cut
 
 sub min2
 {
   return $_[0]->{min2};
 }
 
+=head2 max2
+
+ Title   : max2
+ Usage   : $match->max2;
+ Function: return the maximum index of the chunks in the second of the 
+           ChunkedSources held in this Match
+ Args    : None
+
+=cut
+
 sub max2
 {
   return $_[0]->{max2};
 }
+
 
 sub ranges
 {
@@ -168,6 +196,7 @@ sub pairs
  Args    : None
 
 =cut
+
 sub score
 {
   my $self = shift;

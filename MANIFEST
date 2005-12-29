@@ -10,7 +10,6 @@ lib/Text/Same/ChunkPair.pm
 lib/Text/Same/ChunkedSource.pm
 lib/Text/Same/MatchMap.pm
 lib/Text/Same/Match.pm
-lib/Text/Same/Process.pm
 lib/Text/Same/Range.pm
 scripts/same
 t/00-load.t

@@ -8,10 +8,12 @@ WriteMakefile(
     VERSION_FROM        => 'lib/Text/Same.pm',
     ABSTRACT_FROM       => 'lib/Text/Same.pm',
     PL_FILES            => {},
-    EXE_FILES           => [glob("scripts/*")],
+    EXE_FILES           => [glob("bin/*")],
     PREREQ_PM => {
-        'Test::More' => 0,
-    },
+                  'Test::More' => 0,
+                  'Array::Compare' => 0,
+                  'String::CRC32' => 0,
+                 },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Text-Same-*' },
 );

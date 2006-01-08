@@ -60,7 +60,9 @@ sub hash
 
 sub _hash
 {
-  return crc32(shift);
+  my $text = shift;
+
+  return crc32($text);
 }
 
 =head2 get_all_chunks
@@ -195,9 +197,14 @@ sub get_previous_chunk
   my $chunk = shift;
   my $options = shift;
 
-  my $filtered_indx =
-    $self->get_filtered_indx_from_real($options, $chunk->get_indx);
-  return $self->get_filtered_chunks($options)->[$filtered_indx];
+  my $prev_filtered_indx =
+    $self->get_filtered_indx_from_real($options, $chunk->indx) - 1;
+
+  if ($prev_filtered_indx < 0) {
+    return undef;
+  }
+
+  return ($self->get_filtered_chunks($options))[$prev_filtered_indx];
 }
 
 1;

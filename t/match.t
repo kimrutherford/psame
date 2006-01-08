@@ -60,6 +60,8 @@ my @test_data = (
                  },
                 );
 
+my $count = 0;
+
 for $test_data (@test_data) {
   my $dir = $test_data->{dir};
   my $file1 = "t/data/$dir/file1";
@@ -67,4 +69,6 @@ for $test_data (@test_data) {
   my $matchmap = compare $file1, $file2;
 
   ok(scalar($matchmap->matches) == $test_data->{match_count});
+
+  $count++;
 }

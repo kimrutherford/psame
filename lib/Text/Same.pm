@@ -62,17 +62,16 @@ sub _process_hits($$\%\@$$)
     my $pair_string = $chunk_pair->to_string();
 
     if (!exists $seen_pairs_ref->{$pair_string}) {
-      my $this_chunk_indx = $this_chunk->indx;
-      my $other_chunk_indx = $other_chunk->indx;
+      my $this_prev_chunk = $this_chunked_source->get_previous_chunk($this_chunk);
+      my $other_prev_chunk = $other_chunked_source->get_previous_chunk($other_chunk);
 
-      if ($this_chunk_indx > 0 && $other_chunk_indx > 0) {
-        my $this_prev_chunk = $this_chunked_source->get_previous_chunk;
-        my $other_prev_chunk = $other_chunked_source->get_previous_chunk;
+      if (defined $this_prev_chunk && defined $other_prev_chunk) {
+        my $this_prev_hash =
+          Text::Same::ChunkedSource::hash($options, $this_prev_chunk->text);
+        my $other_prev_hash =
+          Text::Same::ChunkedSource::hash($options, $other_prev_chunk->text);
 
-        my $this_hash = Text::Same::ChunkedSource::hash($options, $this_prev_chunk);
-        my $other_hash = Text::Same::ChunkedSource::hash($options, $other_prev_chunk);
-
-        if ($this_hash = $other_hash) {
+        if ($this_prev_hash == $other_prev_hash) {
           my $prev_pair = $this_prev_chunk->indx . "_" . $other_prev_chunk->indx;
           my $prev_match =  $seen_pairs_ref->{$prev_pair};
 
@@ -98,12 +97,10 @@ sub _find_matches($$$)
   my %seen_pairs = ();
 
   for my $this_chunk (@source1_chunk_array) {
-    my @matching_chunks = 
+    my @matching_chunks =
       $source2->get_matching_chunks($options, $this_chunk->text);
 
     if (@matching_chunks) {
-      my @matching_chunks = @matching_chunks;
-
       _process_hits($options, $this_chunk, %seen_pairs, @matching_chunks,
                     $source1, $source2);
     }
@@ -136,7 +133,7 @@ sub compare {
     elsif ( ! $type ) {
       local $/ = "\n";
       open F, "<$seq" or carp "$!: $seq";
-      $seqs[$i] = [<F>];
+      $seqs[$i] = [map {chomp; $_} (<F>)];
       close F;
     }
     elsif ( $type eq "GLOB" || UNIVERSAL::isa( $seq, "IO::Handle" ) ) {

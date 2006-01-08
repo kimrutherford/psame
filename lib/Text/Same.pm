@@ -52,10 +52,10 @@ use Text::Same::Cache;
 
 our $VERSION = '0.01';
 
-sub _process_hits($\%\@\@\@)
+sub _process_hits($$\%\@$$)
 {
-  my ($this_chunk, $seen_pairs_ref, $matching_chunks_ref,
-      $this_chunk_array_ref, $other_chunk_array_ref) = @_;
+  my ($options, $this_chunk, $seen_pairs_ref, $matching_chunks_ref,
+      $this_chunked_source, $other_chunked_source) = @_;
 
   for my $other_chunk (@$matching_chunks_ref) {
     my $chunk_pair = new Text::Same::ChunkPair($this_chunk, $other_chunk);
@@ -66,10 +66,13 @@ sub _process_hits($\%\@\@\@)
       my $other_chunk_indx = $other_chunk->indx;
 
       if ($this_chunk_indx > 0 && $other_chunk_indx > 0) {
-        my $this_prev_chunk = $this_chunk_array_ref->[$this_chunk_indx-1];
-        my $other_prev_chunk = $other_chunk_array_ref->[$other_chunk_indx-1];
+        my $this_prev_chunk = $this_chunked_source->get_previous_chunk;
+        my $other_prev_chunk = $other_chunked_source->get_previous_chunk;
 
-        if ($this_prev_chunk->hash() == $other_prev_chunk->hash()) {
+        my $this_hash = Text::Same::ChunkedSource::hash($options, $this_prev_chunk);
+        my $other_hash = Text::Same::ChunkedSource::hash($options, $other_prev_chunk);
+
+        if ($this_hash = $other_hash) {
           my $prev_pair = $this_prev_chunk->indx . "_" . $other_prev_chunk->indx;
           my $prev_match =  $seen_pairs_ref->{$prev_pair};
 
@@ -86,30 +89,23 @@ sub _process_hits($\%\@\@\@)
   }
 }
 
-sub _find_matches($$)
+sub _find_matches($$$)
 {
-  my ($source1, $source2) = @_;
+  my ($options, $source1, $source2) = @_;
 
-  my @ca1 = $source1->get_chunks($options);
-  my %ch1 = $source1->get_chunk_hash;
-  my @ca2 = $source2->get_chunks($options);
-  my %ch2 = $source2->get_chunk_hash;
-
-  #  print STDERR "source1: ", %$source1,"\n";
-  #  print STDERR "@ca1 -=- @ca2\n";
-  #  print STDERR "source2: ", %$source2,"\n";
-  #  print STDERR "@ca1 -=- @ca2\n";
-
+  my @source1_chunk_array = $source1->get_filtered_chunks($options);
 
   my %seen_pairs = ();
 
-  for my $this_chunk (@ca1) {
-    my $matching_chunks_ref = $ch2{$this_chunk->text};
+  for my $this_chunk (@source1_chunk_array) {
+    my @matching_chunks = 
+      $source2->get_matching_chunks($options, $this_chunk->text);
 
-    if (defined $matching_chunks_ref) {
-      my @matching_chunks = @$matching_chunks_ref;
+    if (@matching_chunks) {
+      my @matching_chunks = @matching_chunks;
 
-      _process_hits($this_chunk, %seen_pairs, @matching_chunks, @ca1, @ca2);
+      _process_hits($options, $this_chunk, %seen_pairs, @matching_chunks,
+                    $source1, $source2);
     }
   }
 
@@ -157,16 +153,17 @@ sub compare {
   my $source1 = $cache->get($seqs[0], $options);
   my $source2 = $cache->get($seqs[1], $options);
 
-  my $seen_pairs_ref = _find_matches $source1, $source2, $options;
+  my $seen_pairs_ref = _find_matches $options, $source1, $source2;
 
-  return new Text::Same::MatchMap(source1=>$source1, source2=>$source2,
-                                  seen_pairs=>$seen_pairs_ref, $options);
+  return new Text::Same::MatchMap(options=>$options, source1=>$source1,
+                                  source2=>$source2,
+                                  seen_pairs=>$seen_pairs_ref);
 }
 
 
 sub find
 {
-  
+
 }
 
 =head1 ACKNOWLEDGEMENTS

@@ -4,6 +4,8 @@ use warnings;
 use strict;
 use Carp;
 
+use Text::Same::Chunk;
+
 use String::CRC32;
 
 sub new
@@ -16,15 +18,13 @@ sub new
   my %params = @_;
 
   $self->{all_chunks} = _make_all_chunks($params{lines});
-  $self->{chunk_hash_map} = {};
-  $self->{filtered_chunks} = {};
 
   return bless $self, $class;
 }
 
 sub _make_all_chunks
 {
-  my @chunks_text = @_;
+  my @chunks_text = @{$_[0]};
   my @ret = ();
 
   for (my $i = 0; $i < scalar(@chunks_text); ++$i) {
@@ -37,26 +37,48 @@ sub _make_all_chunks
 =head2 hash
 
  Title   : hash
- Usage   : my $hash_value = hash($text)
+ Usage   : my $hash_value = hash($options, $text)
  Function: return an integer hash/checksum for the given text
 
 =cut
 
 sub hash
 {
+  my $options = shift;
+  my $text = shift;
+  
+  if ($options->{ignore_case}) {
+    $text = lc $text;
+  }
+  if ($options->{ignore_space}) {
+    $text =~ s/^\s+//;
+    $text =~ s/\s+/ /g;
+    $text =~ s/\s+$//;
+  }
+  return _hash($text);
+}
+
+sub _hash
+{
   return crc32(shift);
 }
 
-=head2 get_chunks
+=head2 get_all_chunks
 
- Title   : get_chunks
- Usage   : $chunk->get_chunks($params);
+ Title   : get_all_chunks
+ Usage   : $chunk->get_all_chunks($params);
  Function: return (in order) the chunks from this source that match the given
            options:
             ignore_case=> (0 or 1)    -- ignore case when comparing
             ignore_blanks=> (0 or 1)  -- ignore blank lines when comparing
             ignore_space=> (0 or 1)   -- ignore whitespace in lines
 =cut
+
+sub get_all_chunks
+{
+  my $self = shift;
+  return @{$self->{all_chunks}};
+}
 
 sub _make_chunk_maps
 {
@@ -65,10 +87,10 @@ sub _make_chunk_maps
 
   my @filtered_chunks = ();
   my %filtered_hash = ();
-  my %real_index_to_filtered_map = ();
+  my %real_index_to_filtered_index = ();
   my %filtered_index_to_real_index = ();
 
-  my @all_chunks = $self->{all_chunks};
+  my @all_chunks = @{$self->{all_chunks}};
   my $filtered_chunk_count = 0;
 
   for (my $i = 0; $i < scalar(@all_chunks); $i++) {
@@ -76,15 +98,15 @@ sub _make_chunk_maps
     my $text = $chunk->text;
     if (!($options->{ignore_blanks} && $text =~ m!^\s*$!)) {
       push @filtered_chunks, $chunk;
-      $real_index_to_filtered_index{$index} = $filtered_chunk_count;
-      $filtered_index_to_real_index{$filtered_chunk_count} = $index;
-      push @{$filtered_hash{$chunk_text}}, $chunk;
+      $real_index_to_filtered_index{$i} = $filtered_chunk_count;
+      $filtered_index_to_real_index{$filtered_chunk_count} = $i;
+      push @{$filtered_hash{hash($options, $text)}}, $chunk;
       $filtered_chunk_count++;
     }
   }
 
   return \@filtered_chunks, \%filtered_hash,
-         \%real_index_to_filtered_map, \%filtered_index_to_real_index;
+         \%real_index_to_filtered_index, \%filtered_index_to_real_index;
 }
 
 sub _get_map_key_from_options
@@ -93,9 +115,9 @@ sub _get_map_key_from_options
   my $options = shift;
   return
     ("key_" .
-     $options->{ignore_case} ? "w" : "W" . "_"
-     $options->{ignore_blanks} ? "b" : "B" . "_"
-     $options->{ignore_case} ? "i" : "I");
+     ($options->{ignore_case} ? "w" : "W") . "_" .
+     ($options->{ignore_blanks} ? "b" : "B") . "_" .
+     ($options->{ignore_case} ? "i" : "I"));
 }
 
 sub _maybe_make_filtered_maps
@@ -106,10 +128,10 @@ sub _maybe_make_filtered_maps
   my $key = $self->_get_map_key_from_options($options);
 
   if (!exists $self->{filtered_chunks}{$key}) {
-    my ($self->{filtered_chunks}{$key},
-        $self->{filtered_hash}{$key},
-        $self->{real_to_filtered}{$key},
-        $self->{filtered_to_real}{$key}) = $self->_make_chunk_maps($options);
+    ($self->{filtered_chunks}{$key},
+     $self->{filtered_hash}{$key},
+     $self->{real_to_filtered}{$key},
+     $self->{filtered_to_real}{$key}) = $self->_make_chunk_maps($options);
 
   }
 }
@@ -129,15 +151,16 @@ sub get_filtered_chunks
 sub get_matching_chunks
 {
   my $self = shift;
-  my $text = shift;
   my $options = shift;
+  my $text = shift;
 
   my $key = $self->_get_map_key_from_options($options);
 
   $self->_maybe_make_filtered_maps($options);
 
-  my $chunk_hash = $self->{filtered_hash}{$key}
-  return @{$chunk_hash->{hash($text)}};
+  my $chunk_hash = $self->{filtered_hash}{$key};
+
+  return @{$chunk_hash->{hash($options, $text)} || []};
 }
 
 sub get_filtered_indx_from_real
@@ -174,7 +197,7 @@ sub get_previous_chunk
 
   my $filtered_indx =
     $self->get_filtered_indx_from_real($options, $chunk->get_indx);
-  return $self->get_filtered_chunks($options)[$filtered_indx];
+  return $self->get_filtered_chunks($options)->[$filtered_indx];
 }
 
 1;

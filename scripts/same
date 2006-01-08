@@ -7,7 +7,7 @@ use Text::Same;
 my @l1 = qw{b c};
 my @l2 = qw{b c b c};
 
-my $matchmap = compare(\@l1, \@l2);
+my $matchmap = compare(\@l1, \@l2, {ignore_case=>1, ignore_blanks=>1, ignore_space=>1});
 my @matches = $matchmap->matches;
 
 print "--- @matches\n";

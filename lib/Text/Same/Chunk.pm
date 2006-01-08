@@ -10,7 +10,7 @@ Text::Same::Chunk - a chunk of a text for matching
 
 =head1 DESCRIPTION
 
-Objects of this class hold information about a chunk of text, generally a 
+Objects of this class hold information about a chunk of text, generally a
 line/sentence/paragraph.
 
 =head1 METHODS
@@ -39,11 +39,12 @@ use String::CRC32;
 
 =head2 new
 
-Title   : new
-Usage   : $chunk = new Text::Same::Chunk(text=>$some_text, indx=>$line_number);
-Function: Create a new object to hold information about a chunk of text, 
-          generally a line/sentence/paragraph.
-Returns : An Text::Same::Chunk object
+ Title   : new
+ Usage   : $chunk = new Text::Same::Chunk(text=>$some_text,
+                                          indx=>$line_number);
+ Function: Create a new object to hold information about a chunk of text,
+           generally a line/sentence/paragraph.
+ Returns : An Text::Same::Chunk object
 
 =cut
 
@@ -55,7 +56,8 @@ sub new
 
   for my $param_name (keys %params) {
     if (!grep /^$param_name$/, ("text", "indx")) {
-      croak "illegal arg in Chunk constructor: $param_name=>$params{$param_name}\n"
+      croak "illegal arg in Chunk constructor:\n" .
+            "$param_name=>$params{$param_name}\n"
     }
   }
 
@@ -64,9 +66,9 @@ sub new
 
 =head2 text
 
-Title   : text
-Usage   : $chunk->text;
-Function: return the text that was passed to new()
+ Title   : text
+ Usage   : $chunk->text;
+ Function: return the text that was passed to new()
 
 =cut
 
@@ -78,9 +80,9 @@ sub text
 
 =head2 indx
 
-Title   : indx
-Usage   : $chunk->indx;
-Function: return the indx that was passed to new()
+ Title   : indx
+ Usage   : $chunk->indx;
+ Function: return the indx that was passed to new()
 
 =cut
 
@@ -88,19 +90,6 @@ sub indx
 {
   my $self = shift;
   return $self->{indx};
-}
-
-=head2 hash
-
-Title   : hash
-Usage   : my $hash_value = $chunk->hash;
-Function: return an integer hash/checksum for the text of this Chunk
-
-=cut
-
-sub hash
-{
-  return crc32(shift->text());
 }
 
 1;

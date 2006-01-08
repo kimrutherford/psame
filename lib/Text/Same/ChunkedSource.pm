@@ -4,7 +4,7 @@ use warnings;
 use strict;
 use Carp;
 
-#use String::CRC32;
+use String::CRC32;
 
 sub new
 {
@@ -15,51 +15,166 @@ sub new
 
   my %params = @_;
 
-  $self->{chunks} = _make_chunks(@{$params{lines}});
-  $self->{hash} = _get_chunk_hash(@{$params{lines}});
+  $self->{all_chunks} = _make_all_chunks($params{lines});
+  $self->{chunk_hash_map} = {};
+  $self->{filtered_chunks} = {};
 
   return bless $self, $class;
 }
 
-sub _make_chunks
+sub _make_all_chunks
 {
   my @chunks_text = @_;
-
-#  print STDERR "_make_chunks text: @chunks_text\n";
-
   my @ret = ();
 
   for (my $i = 0; $i < scalar(@chunks_text); ++$i) {
     push @ret, new Text::Same::Chunk(text=>$chunks_text[$i], indx=>$i);
   }
 
-#  print STDERR "_make_chunks: @ret\n";
-
   return \@ret;
 }
 
-sub _get_chunk_hash
-{
-  my %ret_hash = ();
+=head2 hash
 
-  for (my $i = 0; $i < @_; ++$i) {
-    my $chunk_text = $_[$i];
-    push @{$ret_hash{$chunk_text}}, new Text::Same::Chunk(text=>$chunk_text, indx=>$i);
+ Title   : hash
+ Usage   : my $hash_value = hash($text)
+ Function: return an integer hash/checksum for the given text
+
+=cut
+
+sub hash
+{
+  return crc32(shift);
+}
+
+=head2 get_chunks
+
+ Title   : get_chunks
+ Usage   : $chunk->get_chunks($params);
+ Function: return (in order) the chunks from this source that match the given
+           options:
+            ignore_case=> (0 or 1)    -- ignore case when comparing
+            ignore_blanks=> (0 or 1)  -- ignore blank lines when comparing
+            ignore_space=> (0 or 1)   -- ignore whitespace in lines
+=cut
+
+sub _make_chunk_maps
+{
+  my $self = shift;
+  my $options = shift;
+
+  my @filtered_chunks = ();
+  my %filtered_hash = ();
+  my %real_index_to_filtered_map = ();
+  my %filtered_index_to_real_index = ();
+
+  my @all_chunks = $self->{all_chunks};
+  my $filtered_chunk_count = 0;
+
+  for (my $i = 0; $i < scalar(@all_chunks); $i++) {
+    my $chunk = $self->{all_chunks}[$i];
+    my $text = $chunk->text;
+    if (!($options->{ignore_blanks} && $text =~ m!^\s*$!)) {
+      push @filtered_chunks, $chunk;
+      $real_index_to_filtered_index{$index} = $filtered_chunk_count;
+      $filtered_index_to_real_index{$filtered_chunk_count} = $index;
+      push @{$filtered_hash{$chunk_text}}, $chunk;
+      $filtered_chunk_count++;
+    }
   }
 
-  return \%ret_hash;
+  return \@filtered_chunks, \%filtered_hash,
+         \%real_index_to_filtered_map, \%filtered_index_to_real_index;
 }
 
-sub get_all_chunks
+sub _get_map_key_from_options
 {
   my $self = shift;
-  return @{$self->{chunks}};
+  my $options = shift;
+  return
+    ("key_" .
+     $options->{ignore_case} ? "w" : "W" . "_"
+     $options->{ignore_blanks} ? "b" : "B" . "_"
+     $options->{ignore_case} ? "i" : "I");
 }
 
-sub get_chunk_hash
+sub _maybe_make_filtered_maps
 {
   my $self = shift;
-  return %{$self->{hash}};
+  my $options = shift;
+
+  my $key = $self->_get_map_key_from_options($options);
+
+  if (!exists $self->{filtered_chunks}{$key}) {
+    my ($self->{filtered_chunks}{$key},
+        $self->{filtered_hash}{$key},
+        $self->{real_to_filtered}{$key},
+        $self->{filtered_to_real}{$key}) = $self->_make_chunk_maps($options);
+
+  }
+}
+
+sub get_filtered_chunks
+{
+  my $self = shift;
+  my $options = shift;
+
+  my $key = $self->_get_map_key_from_options($options);
+
+  $self->_maybe_make_filtered_maps($options);
+
+  return @{$self->{filtered_chunks}{$key}};
+}
+
+sub get_matching_chunks
+{
+  my $self = shift;
+  my $text = shift;
+  my $options = shift;
+
+  my $key = $self->_get_map_key_from_options($options);
+
+  $self->_maybe_make_filtered_maps($options);
+
+  my $chunk_hash = $self->{filtered_hash}{$key}
+  return @{$chunk_hash->{hash($text)}};
+}
+
+sub get_filtered_indx_from_real
+{
+  my $self = shift;
+  my $options = shift;
+  my $real_indx = shift;
+
+  my $key = $self->_get_map_key_from_options($options);
+
+  $self->_maybe_make_filtered_maps($options);
+
+  return $self->{real_to_filtered}{$key}{$real_indx};
+}
+
+sub get_real_indx_from_filtered
+{
+  my $self = shift;
+  my $options = shift;
+  my $filtered_indx = shift;
+
+  my $key = $self->_get_map_key_from_options($options);
+
+  $self->_maybe_make_filtered_maps($options);
+
+  return $self->{real_to_filtered}{$key}{$filtered_indx};
+}
+
+sub get_previous_chunk
+{
+  my $self = shift;
+  my $chunk = shift;
+  my $options = shift;
+
+  my $filtered_indx =
+    $self->get_filtered_indx_from_real($options, $chunk->get_indx);
+  return $self->get_filtered_chunks($options)[$filtered_indx];
 }
 
 1;

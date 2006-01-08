@@ -11,6 +11,8 @@ sub new
 
   my $self = {@_};
 
+  my $source1 = %{$self->{source1}};
+  my $source2 = %{$self->{source2}};
   my %seen_pairs = %{$self->{seen_pairs}};
 
   my @matches = values %seen_pairs;
@@ -25,29 +27,41 @@ sub new
 
   bless $self, $class;
 
-#  $self->_find_unmatched_chunks();
+  $self->_find_unmatched_chunks();
 
   return $self;
 }
 
-# sub _find_matched_ranges
-# {
-#   my $self = shift;
-#   my @matches = $self->matches;
+sub _find_matched_ranges
+{
+  my $self = shift;
+  my @matches = $self->matches;
 
-#   my %line_to_matches1 = ();
-#   my %line_to_matches2 = ();
+  my %indx_to_matches1 = ();
+  my %indx_to_matches2 = ();
 
-#   for my $match (@matches) {
-#     my $i;
-#     for ($i = $match->min1; $i <= $match->max1; ++$i) {
-#       push @{$line_to_matches1{$i}}, $match;
-#     }
-#     for ($i = $match->min2; $i <= $match->max2; ++$i) {
-#       push @{$line_to_matches2{$i}}, $match;
-#     }
-#   }
-# }
+  for my $match (@matches) {
+    my $i;
+    for ($i = $match->min1; $i <= $match->max1; ++$i) {
+      push @{$indx_to_matches1{$i}}, $match;
+    }
+    for ($i = $match->min2; $i <= $match->max2; ++$i) {
+      push @{$indx_to_matches2{$i}}, $match;
+    }
+  }
+
+  $self->{non_matches1} = _get_non_matches($source1, \%indx_to_matches1);
+  $self->{non_matches2} = _get_non_matches($source2, \%indx_to_matches2);
+}
+
+sub _get_non_matches
+{
+  my $source = shift;
+  my $indx_to_matches_ref = shift;
+  my %indx_to_matches = %{$indx_to_matches_ref};
+
+  my $max_chunk_
+}
 
 sub matches
 {
@@ -55,14 +69,17 @@ sub matches
   return @{$self->{matches}};
 }
 
-sub non_matches_1
+sub non_matches1
 {
-  
+  my $self = shift;
+  return @{$self->{non_matches1}};
+
 }
 
-sub non_matches_2
+sub non_matches2
 {
-  
+  my $self = shift;
+  return @{$self->{non_matches2}};
 }
 
 1;

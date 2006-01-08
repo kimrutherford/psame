@@ -90,9 +90,9 @@ sub _find_matches($$)
 {
   my ($source1, $source2) = @_;
 
-  my @ca1 = $source1->get_all_chunks;
+  my @ca1 = $source1->get_chunks($options);
   my %ch1 = $source1->get_chunk_hash;
-  my @ca2 = $source2->get_all_chunks;
+  my @ca2 = $source2->get_chunks($options);
   my %ch2 = $source2->get_chunk_hash;
 
   #  print STDERR "source1: ", %$source1,"\n";
@@ -154,13 +154,13 @@ sub compare {
 
   my $cache = new Text::Same::Cache();
 
-  my $source1 = $cache->get($seqs[0]);
-  my $source2 = $cache->get($seqs[1]);
+  my $source1 = $cache->get($seqs[0], $options);
+  my $source2 = $cache->get($seqs[1], $options);
 
-  my $seen_pairs_ref = _find_matches $source1, $source2;
+  my $seen_pairs_ref = _find_matches $source1, $source2, $options;
 
   return new Text::Same::MatchMap(source1=>$source1, source2=>$source2,
-                                  seen_pairs=>$seen_pairs_ref);
+                                  seen_pairs=>$seen_pairs_ref, $options);
 }
 
 

@@ -62,8 +62,8 @@ sub _process_hits($$\%\@$$)
     my $pair_string = $chunk_pair->to_string();
 
     if (!exists $seen_pairs_ref->{$pair_string}) {
-      my $this_prev_chunk = $this_chunked_source->get_previous_chunk($this_chunk);
-      my $other_prev_chunk = $other_chunked_source->get_previous_chunk($other_chunk);
+      my $this_prev_chunk = $this_chunked_source->get_previous_chunk($this_chunk, $options);
+      my $other_prev_chunk = $other_chunked_source->get_previous_chunk($other_chunk, $options);
 
       if (defined $this_prev_chunk && defined $other_prev_chunk) {
         my $this_prev_hash =

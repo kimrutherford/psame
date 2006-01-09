@@ -102,6 +102,7 @@ sub _make_chunk_maps
       push @filtered_chunks, $chunk;
       $real_index_to_filtered_index{$i} = $filtered_chunk_count;
       $filtered_index_to_real_index{$filtered_chunk_count} = $i;
+
       push @{$filtered_hash{hash($options, $text)}}, $chunk;
       $filtered_chunk_count++;
     }
@@ -115,6 +116,11 @@ sub _get_map_key_from_options
 {
   my $self = shift;
   my $options = shift;
+
+  if (!defined $options) {
+    carp("\$options is undefined");
+  }
+
   return
     ("key_" .
      ($options->{ignore_case} ? "w" : "W") . "_" .

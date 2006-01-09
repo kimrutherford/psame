@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More tests => 8;
+use Test::More tests => 11;
 
 use Text::Same;
 
@@ -53,6 +53,27 @@ my @test_data = (
                   unmatched2=>3,
                  },
                  {
+                  dir=>"test5",
+                  match_count=>3,
+                  unmatched1=>0,
+                  unmatched2=>3,
+                  ignore_space=>1,
+                 },
+                 {
+                  dir=>"test6",
+                  match_count=>3,
+                  unmatched1=>0,
+                  unmatched2=>3,
+                  ignore_blanks=>1,
+                 },
+                 {
+                  dir=>"test7",
+                  match_count=>3,
+                  unmatched1=>0,
+                  unmatched2=>3,
+                  ignore_case=>1,
+                 },
+                 {
                   dir=>"test8",
                   match_count=>5,
                   unmatched1=>1,
@@ -66,7 +87,8 @@ for $test_data (@test_data) {
   my $dir = $test_data->{dir};
   my $file1 = "t/data/$dir/file1";
   my $file2 = "t/data/$dir/file2";
-  my $matchmap = compare $file1, $file2;
+  my $options = $test_data;
+  my $matchmap = compare $file1, $file2, $options;
 
   ok(scalar($matchmap->matches) == $test_data->{match_count});
 

@@ -35,7 +35,6 @@ may redistributed under the same conditions as Perl itself.
 use warnings;
 use strict;
 use Carp;
-use String::CRC32;
 
 =head2 new
 

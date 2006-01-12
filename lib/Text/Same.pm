@@ -62,8 +62,10 @@ sub _process_hits($$\%\@$$)
     my $pair_string = $chunk_pair->to_string();
 
     if (!exists $seen_pairs_ref->{$pair_string}) {
-      my $this_prev_chunk = $this_chunked_source->get_previous_chunk($this_chunk, $options);
-      my $other_prev_chunk = $other_chunked_source->get_previous_chunk($other_chunk, $options);
+      my $this_prev_chunk =
+        $this_chunked_source->get_previous_chunk($this_chunk, $options);
+      my $other_prev_chunk =
+        $other_chunked_source->get_previous_chunk($other_chunk, $options);
 
       if (defined $this_prev_chunk && defined $other_prev_chunk) {
         my $this_prev_hash =
@@ -71,8 +73,9 @@ sub _process_hits($$\%\@$$)
         my $other_prev_hash =
           Text::Same::ChunkedSource::hash($options, $other_prev_chunk->text);
 
-        if ($this_prev_hash == $other_prev_hash) {
-          my $prev_pair = $this_prev_chunk->indx . "_" . $other_prev_chunk->indx;
+        if ($this_prev_hash eq $other_prev_hash) {
+          my $prev_pair =
+            $this_prev_chunk->indx . "_" . $other_prev_chunk->indx;
           my $prev_match =  $seen_pairs_ref->{$prev_pair};
 
           if (defined $prev_match) {
@@ -82,7 +85,10 @@ sub _process_hits($$\%\@$$)
           }
         }
       }
-      my $match = new Text::Same::Match($chunk_pair);
+
+      my $match = new Text::Same::Match(source1=>$this_chunked_source,
+                                        source2=>$other_chunked_source,
+                                        pairs=>[$chunk_pair]);
       $seen_pairs_ref->{$pair_string} = $match;
     }
   }
@@ -109,7 +115,8 @@ sub _find_matches($$$)
   return \%seen_pairs;
 }
 
-sub compare {
+sub compare
+{
   my @seqs = ( shift, shift );
   my $options = shift || {};
 

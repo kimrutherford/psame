@@ -6,7 +6,7 @@ use Carp;
 
 use Text::Same::Chunk;
 
-use String::CRC32;
+use Digest::MD5 qw(md5);
 
 sub new
 {
@@ -46,7 +46,9 @@ sub hash
 {
   my $options = shift;
   my $text = shift;
-  
+
+  print STDERR $options->{ignore_blanks}, " - b\n";
+
   if ($options->{ignore_case}) {
     $text = lc $text;
   }
@@ -62,7 +64,7 @@ sub _hash
 {
   my $text = shift;
 
-  return crc32($text);
+  return md5($text);
 }
 
 =head2 get_all_chunks

@@ -50,22 +50,20 @@ use Carp;
 
 sub new
 {
-  my $self  = shift;
-  my $class = ref($self) || $self;
+  my $arg  = shift;
+  my $class = ref($arg) || $arg;
 
-  my $ret = {};
+  my $self = {@_};
 
-  $ret->{pairs} = [@_];
+  $self->{min1} = 999999999999;
+  $self->{max1} = -1;
+  $self->{min2} = 999999999999;
+  $self->{max2} = -1;
 
-  $ret->{min1} = 999999999999;
-  $ret->{max1} = -1;
-  $ret->{min2} = 999999999999;
-  $ret->{max2} = -1;
+  bless $self, $class;
+  $self->_update_stats(@{$self->{pairs}});
 
-  bless $ret, $class;
-  $ret->_update_stats(@_);
-
-  return $ret;
+  return $self;
 }
 
 
@@ -88,6 +86,18 @@ sub add
     push @{$self->{pairs}}, $chunk_pair;
   }
   $self;
+}
+
+sub source1
+{
+  my $self = shift;
+  return $self->{source1};
+}
+
+sub source2
+{
+  my $self = shift;
+  return $self->{source2};
 }
 
 sub _update_stats
@@ -201,6 +211,13 @@ sub score
 {
   my $self = shift;
   return $self->{max1} - $self->{min1} + $self->{max2} - $self->{min2} + 2;
+}
+
+sub to_string
+{
+  my $self = shift;
+
+  return $self->min1 . ".." . $self->max1 . "==" . $self->min2 . ".." . $self->max2;
 }
 
 1;

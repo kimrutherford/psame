@@ -1,7 +1,6 @@
 #!perl -T
 
 use Test::More tests => 8;
-use Array::Compare;
 use Text::Same::ChunkedSource;
 
 my @t1 =
@@ -181,7 +180,22 @@ my %expected =
 
 my $cs1 = new Text::Same::ChunkedSource(lines=>\@t1);
 
-my $comp = new Array::Compare();
+sub array_comp(\@\@)
+{
+  my ($ar1, $ar2) = @_;
+  my @a1 = @$ar1;
+  my @a2 = @$ar2;
+  if (scalar(@a1) == scalar(@a2)) {
+    for (my $i = 0; $i < scalar(@a1); $i++) {
+      if ($a1[$i] ne $a2[$i]) {
+        return 0;
+      }
+    }
+    return 1;
+  } else {
+    return 0;
+  }
+}
 
 for my $ignore_space (0..1) {
   for my $ignore_blanks (0..1) {
@@ -198,8 +212,7 @@ for my $ignore_space (0..1) {
         } $cs1->get_filtered_chunks($options);
       my @comp_chunk_hashes = map {Text::Same::ChunkedSource::_hash($_)} @comp_array;
 
-      ok($comp->compare(\@cs1_chunk_hashes,
-                        \@comp_chunk_hashes));
+      ok(array_comp(@cs1_chunk_hashes, @comp_chunk_hashes));
 
     }
   }

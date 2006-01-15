@@ -47,8 +47,6 @@ sub hash
   my $options = shift;
   my $text = shift;
 
-  print STDERR $options->{ignore_blanks}, " - b\n";
-
   if ($options->{ignore_case}) {
     $text = lc $text;
   }

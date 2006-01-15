@@ -3,12 +3,12 @@
 use strict;
 
 use Text::Same;
-use Text::Same::TextUI qw( draw_with_context );
+use Text::Same::TextUI qw( draw_match );
 
 use Getopt::Std;
 
 my %command_line_options = ();
-getopts('vrlV:', \%command_line_options);
+getopts('viBb', \%command_line_options);
 
 my %options = ();
 
@@ -16,13 +16,11 @@ $options{ignore_case} = $command_line_options{i};
 $options{ignore_blanks} = $command_line_options{B};
 $options{ignore_space} = $command_line_options{b};
 
-$options{ignore_blanks} = 1;
-
 if (@ARGV != 2) {
   die "usage: $0 [-b] [-B] [-i] file1 file2\n";
 }
 
-my $matchmap = compare($ARGV[0], $ARGV[1], \%options);
+my $matchmap = compare(\%options, $ARGV[0], $ARGV[1]);
 
 my @matches = $matchmap->matches;
 
@@ -30,6 +28,6 @@ print "--- @matches\n";
 
 for my $match (@matches) {
   print "-----  ", $match->min1, "..", $match->max1, ", ", $match->min2, "..", $match->max2, "  ", $match->score(), "\n";
-  print draw_with_context(\%options, $match);
+  print draw_match(\%options, $match);
 }
 

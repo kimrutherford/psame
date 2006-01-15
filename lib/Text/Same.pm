@@ -63,9 +63,9 @@ sub _process_hits($$\%\@$$)
 
     if (!exists $seen_pairs_ref->{$pair_string}) {
       my $this_prev_chunk =
-        $this_chunked_source->get_previous_chunk($this_chunk, $options);
+        $this_chunked_source->get_previous_chunk($options, $this_chunk);
       my $other_prev_chunk =
-        $other_chunked_source->get_previous_chunk($other_chunk, $options);
+        $other_chunked_source->get_previous_chunk($options, $other_chunk);
 
       if (defined $this_prev_chunk && defined $other_prev_chunk) {
         my $this_prev_hash =
@@ -115,10 +115,22 @@ sub _find_matches($$$)
   return \%seen_pairs;
 }
 
+=head2 compare
+
+ Title   : compare
+ Usage   : $results = $chunk->compare($options, $file1, $file2)
+        or
+           $results = $chunk->compare($options, \@array1, \@array2)
+           $all_match = $results->all_matches;
+ Function: return a MatchMap object holding matches between the two given 
+           files or arrays of strings
+
+=cut
+
 sub compare
 {
-  my @seqs = ( shift, shift );
   my $options = shift || {};
+  my @seqs = ( shift, shift );
 
   for my $i ( 0..1 ) {
     my $seq = $seqs[$i];
@@ -165,14 +177,9 @@ sub compare
 }
 
 
-sub find
-{
-
-}
-
 =head1 ACKNOWLEDGEMENTS
 
-Most of this code came from Text::Diff.
+This file mostly came from Text::Diff.  I added any bugs that are present.
 
 =head1 AUTHOR
 
@@ -180,7 +187,7 @@ Kim Rutherford, C<< <kmr at xenu.org.uk> >>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2005 Kim Rutherford, all rights reserved.
+Copyright 2005,2006 Kim Rutherford, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

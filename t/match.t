@@ -7,7 +7,8 @@ use Text::Same;
 my @t1 = qw{b c};
 my @t2 = qw{b c b c};
 
-my $matchmap = compare \@t1, \@t2;
+my $options = {};
+my $matchmap = compare $options, \@t1, \@t2;
 my @matches = $matchmap->matches;
 
 ok(scalar(@matches) == 2);
@@ -88,7 +89,7 @@ for $test_data (@test_data) {
   my $file1 = "t/data/$dir/file1";
   my $file2 = "t/data/$dir/file2";
   my $options = $test_data;
-  my $matchmap = compare $file1, $file2, $options;
+  my $matchmap = compare $options, $file1, $file2;
 
   ok(scalar($matchmap->matches) == $test_data->{match_count});
 

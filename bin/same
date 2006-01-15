@@ -8,16 +8,19 @@ use Text::Same::TextUI qw( draw_match );
 use Getopt::Std;
 
 my %command_line_options = ();
-getopts('viBb', \%command_line_options);
+getopts('viBbVy', \%command_line_options);
 
-my %options = ();
+# set defaults
+my %options = (side_by_side => 1);
 
 $options{ignore_case} = $command_line_options{i};
 $options{ignore_blanks} = $command_line_options{B};
 $options{ignore_space} = $command_line_options{b};
+$options{side_by_side} = 0 if defined $command_line_options{V};
+$options{side_by_side} = 1 if defined $command_line_options{y};
 
 if (@ARGV != 2) {
-  die "usage: $0 [-b] [-B] [-i] file1 file2\n";
+  die "usage: $0 [-b] [-B] [-i] [-y] [-V] file1 file2\n";
 }
 
 my $matchmap = compare(\%options, $ARGV[0], $ARGV[1]);

@@ -11,8 +11,7 @@ WriteMakefile(
     EXE_FILES           => [glob("bin/*")],
     PREREQ_PM => {
                   'Test::More' => 0,
-                  'Array::Compare' => 0,
-                  'String::CRC32' => 0,
+                  'Term::Size' => 0,
                  },
     dist                => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean               => { FILES => 'Text-Same-*' },

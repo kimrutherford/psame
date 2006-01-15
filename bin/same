@@ -8,7 +8,7 @@ use Text::Same::TextUI qw( draw_match );
 use Getopt::Std;
 
 my %command_line_options = ();
-getopts('viBbVy', \%command_line_options);
+getopts('viBbVyx:', \%command_line_options);
 
 # set defaults
 my %options = (side_by_side => 1);
@@ -18,19 +18,26 @@ $options{ignore_blanks} = $command_line_options{B};
 $options{ignore_space} = $command_line_options{b};
 $options{side_by_side} = 0 if defined $command_line_options{V};
 $options{side_by_side} = 1 if defined $command_line_options{y};
+$options{term_width} = $command_line_options{x};
 
 if (@ARGV != 2) {
   die "usage: $0 [-b] [-B] [-i] [-y] [-V] file1 file2\n";
+}
+
+if (!defined $options{term_width}) {
+  $options{term_width} = eval "require Term::Size; Term::Size::chars()";
+
+  if ($@ or $options{term_width} == 0) {
+    # pick a default
+    $options{term_width} = 80;
+  }
 }
 
 my $matchmap = compare(\%options, $ARGV[0], $ARGV[1]);
 
 my @matches = $matchmap->matches;
 
-print "--- @matches\n";
-
 for my $match (@matches) {
-  print "-----  ", $match->min1, "..", $match->max1, ", ", $match->min2, "..", $match->max2, "  ", $match->score(), "\n";
   print draw_match(\%options, $match);
 }
 

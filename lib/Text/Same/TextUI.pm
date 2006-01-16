@@ -37,7 +37,7 @@ sub _draw_match_side_by_side
   my $half_width = int($width / 2 - 6);
 
   my $ret = "match " . ($min1+1) . ".." . ($max1+1) . "==" .
-            ($min2+1) . ".." . ($max1+1) . "\n";
+            ($min2+1) . ".." . ($max2+1) . "\n";
 
   my @start_context1 = _get_start_context($options, $min1, $match->source1);
   my @start_context2 = _get_start_context($options, $min2, $match->source2);
@@ -97,7 +97,9 @@ sub _get_match_chunks
   my @ret = ();
 
   for (my $i = $min; $i <= $max; $i++) {
-    push @ret, ($source->get_all_chunks)[$i]->text;
+    if (defined $source->get_filtered_indx_from_real($options, $i)) {
+      push @ret, ($source->get_all_chunks)[$i]->text;
+    }
   }
 
   return @ret;

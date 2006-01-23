@@ -97,9 +97,7 @@ sub _get_match_chunks
   my @ret = ();
 
   for (my $i = $min; $i <= $max; $i++) {
-    if (defined $source->get_filtered_indx_from_real($options, $i)) {
-      push @ret, ($source->get_all_chunks)[$i]->text;
-    }
+    push @ret, ($source->get_all_chunks)[$i]->text;
   }
 
   return @ret;

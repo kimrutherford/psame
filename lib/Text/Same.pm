@@ -59,7 +59,7 @@ sub _process_hits($$\%\@$$)
 
   for my $other_chunk (@$matching_chunks_ref) {
     my $chunk_pair = new Text::Same::ChunkPair($this_chunk, $other_chunk);
-    my $pair_string = $chunk_pair->to_string();
+    my $pair_string = $chunk_pair->as_string();
 
     if (!exists $seen_pairs_ref->{$pair_string}) {
       my $this_prev_chunk =

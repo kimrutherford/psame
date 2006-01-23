@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 
 WriteMakefile(
     NAME                => 'Text::Same',
-    AUTHOR              => 'Kim Rutherford <kmr@xenu.org.uk>',
+    AUTHOR              => 'Kim Rutherford <kmr+same@xenu.org.uk>',
     VERSION_FROM        => 'lib/Text/Same.pm',
     ABSTRACT_FROM       => 'lib/Text/Same.pm',
     PL_FILES            => {},

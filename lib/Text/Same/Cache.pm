@@ -16,7 +16,7 @@ sub new
 sub get
 {
   my $self = shift;
-  return new Text::Same::ChunkedSource(lines=>shift);
+  return new Text::Same::ChunkedSource(chunks=>shift);
 }
 
 1;

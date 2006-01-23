@@ -23,7 +23,14 @@ sub new
     $uniq_matches{"@ranges"} = $match;
   }
 
-  $self->{matches} = [values %uniq_matches];
+  my @sorted_matches = 
+    sort {
+      $a->min1 <=> $b->min1
+        ||
+      $a->min2 <=> $b->min2;
+    } values %uniq_matches;
+
+  $self->{matches} = \@sorted_matches;
 
   bless $self, $class;
 

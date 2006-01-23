@@ -147,7 +147,7 @@ sub _draw_match_vertically
 {
   my ($options, $match) = @_;
 
-  my $ret = "match " . $match->to_string . "\n";
+  my $ret = "match " . $match->as_string . "\n";
 
   $ret .= _draw_range_and_context($options, $match->min1, $match->max1,
                                  $match->source1);

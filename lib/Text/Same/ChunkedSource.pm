@@ -111,7 +111,8 @@ sub _make_chunk_maps
   for (my $i = 0; $i < scalar(@all_chunks); $i++) {
     my $chunk = $self->{all_chunks}[$i];
     my $text = $chunk->text;
-    if (!($options->{ignore_blanks} && $text =~ m!^\s*$!)) {
+    if (!($options->{ignore_blanks} && $text =~ m!^\s*$!) &&
+        !_is_simple($options, $text)) {
       push @filtered_chunks, $chunk;
       $real_index_to_filtered_index{$i} = $filtered_chunk_count;
       $filtered_index_to_real_index{$filtered_chunk_count} = $i;
@@ -123,6 +124,19 @@ sub _make_chunk_maps
 
   return \@filtered_chunks, \%filtered_hash,
          \%real_index_to_filtered_index, \%filtered_index_to_real_index;
+}
+
+sub _is_simple($$)
+{
+  my ($options, $text) = @_;
+  if ($options->{ignore_simple}) {
+    my $simple_len = $options->{ignore_simple};
+    $text =~ s/\s+//g;
+    if (length $text <= $simple_len) {
+      return 1;
+    }
+  }
+  return 0;
 }
 
 sub _get_map_key_from_options
@@ -138,7 +152,8 @@ sub _get_map_key_from_options
     ("key_" .
      ($options->{ignore_case} ? "w" : "W") . "_" .
      ($options->{ignore_blanks} ? "b" : "B") . "_" .
-     ($options->{ignore_case} ? "i" : "I"));
+     ($options->{ignore_case} ? "i" : "I") . "_" .
+     ($options->{ignore_simple} ? $options->{ignore_simple} : "0"));
 }
 
 sub _maybe_make_filtered_maps

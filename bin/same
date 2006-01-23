@@ -8,7 +8,7 @@ use Text::Same::TextUI qw( draw_match );
 use Getopt::Std;
 
 my %command_line_options = ();
-getopts('viBbVynx:S:r:', \%command_line_options);
+getopts('viBbVyns:x:S:r:', \%command_line_options);
 
 # set defaults
 my %options = (side_by_side => 1);
@@ -16,6 +16,7 @@ my %options = (side_by_side => 1);
 $options{ignore_case} = $command_line_options{i};
 $options{ignore_blanks} = $command_line_options{B};
 $options{ignore_space} = $command_line_options{b};
+$options{ignore_simple} = $command_line_options{s};
 $options{side_by_side} = 0 if defined $command_line_options{V};
 $options{side_by_side} = 1 if defined $command_line_options{y};
 $options{term_width} = $command_line_options{x};
@@ -33,15 +34,16 @@ or
  usage: $0 [options] [-r version] file
 
 options:
-   -b           ignore changes in whitespace
-   -i           ignore case
-   -B           ignore blank lines
-   -y           side-by-side match view (default)
-   -V           vertical match view
-   -x           terminal width in columns
-   -n           show non-matches instead
-   -r <version> compare with <version> from SVN, CVS or RCS
-   -M <score>   return only matches higher than <score>
+   -b       ignore changes in whitespace
+   -i       ignore case
+   -B       ignore blank lines
+   -s <num> ignore simple/short lines (ie. less than <num> chars>
+   -y       side-by-side match view (default)
+   -V       vertical match view
+   -n       show non-matches instead
+   -x <wid> set terminal width in columns (normally guessed)
+   -r <ver> compare with <version> from SVN, CVS or RCS
+   -S <num> only show matches with score higher than <num>
 
 The first usage compares the two files.
 The second usage compare the given file with the latest version from 

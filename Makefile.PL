@@ -8,7 +8,7 @@ WriteMakefile(
     VERSION_FROM        => 'lib/Text/Same.pm',
     ABSTRACT_FROM       => 'lib/Text/Same.pm',
     PL_FILES            => {},
-    EXE_FILES           => [glob("bin/*")],
+    EXE_FILES           => ["bin/same"],
     PREREQ_PM => {
                   'Test::More' => 0,
                   'Term::Size' => 0,

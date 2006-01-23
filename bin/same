@@ -8,7 +8,7 @@ use Text::Same::TextUI qw( draw_match );
 use Getopt::Std;
 
 my %command_line_options = ();
-getopts('viBbVynx:M:', \%command_line_options);
+getopts('viBbVynx:S:r:', \%command_line_options);
 
 # set defaults
 my %options = (side_by_side => 1);
@@ -19,22 +19,61 @@ $options{ignore_space} = $command_line_options{b};
 $options{side_by_side} = 0 if defined $command_line_options{V};
 $options{side_by_side} = 1 if defined $command_line_options{y};
 $options{term_width} = $command_line_options{x};
-$options{min_score} = $command_line_options{M};
+$options{min_score} = $command_line_options{S};
 $options{non_matches} = $command_line_options{n};
+$options{revision} = $command_line_options{r};
 
-if (@ARGV != 2) {
+sub usage
+{
   die <<USAGE;
-usage: $0 [-b] [-B] [-i] [-y] [-V] file1 file2
+ usage: $0 [options] file1 file2
+or
+ usage: $0 [options] file
+or
+ usage: $0 [options] [-r version] file
 
 options:
-   -b ignore changes in whitespace
-   -i ignore case
-   -B ignore blank lines
-   -y side-by-side match view (default)
-   -V vertical match view
-   -x terminal width in columns
-   -n show non-matches instead
+   -b           ignore changes in whitespace
+   -i           ignore case
+   -B           ignore blank lines
+   -y           side-by-side match view (default)
+   -V           vertical match view
+   -x           terminal width in columns
+   -n           show non-matches instead
+   -r <version> compare with <version> from SVN, CVS or RCS
+   -M <score>   return only matches higher than <score>
+
+The first usage compares the two files.
+The second usage compare the given file with the latest version from 
+Subversion, CVS or RCS.
+The third usage compares again a given version.
 USAGE
+}
+
+if (@ARGV < 1 or @ARGV > 2) {
+  usage;
+}
+
+if (@ARGV == 1) {
+  my $revision = "";
+
+  if (defined $options{revision}) {
+    $revision = "-r $options{revision} ";
+  }
+
+  if (-d ".svn") {
+    push @ARGV, "svn cat $revision$ARGV[0]|";
+  } else {
+    if (-d "CVS") {
+      push @ARGV, "cvs up $revision-p $ARGV[0]|";
+    } else {
+      if (-e "$ARGV[0],v") {
+        push @ARGV, "co $revision-p $ARGV[0]|";
+      } else {
+        usage;
+      }
+    }
+  }
 }
 
 if (!defined $options{term_width}) {

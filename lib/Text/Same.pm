@@ -151,7 +151,11 @@ sub compare
     }
     elsif ( ! $type ) {
       local $/ = "\n";
-      open F, "<$seq" or carp "$!: $seq";
+      if ($seq =~ /(rcs|svn|co).*\|/) {
+        open F, "$seq" or carp "$!: $seq";
+      } else {
+        open F, "<$seq" or carp "$!: $seq";
+      }
       $seqs[$i] = [map {chomp; $_} (<F>)];
       close F;
     }

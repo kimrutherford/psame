@@ -48,7 +48,7 @@ options:
 The first usage compares the two files.
 The second usage compare the given file with the latest version from 
 Subversion, CVS or RCS.
-The third usage compares again a given version.
+The third usage will compare against a given version.
 USAGE
 }
 

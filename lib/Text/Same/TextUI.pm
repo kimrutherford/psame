@@ -97,7 +97,9 @@ sub _get_match_chunks
   my @ret = ();
 
   for (my $i = $min; $i <= $max; $i++) {
-    push @ret, ($source->get_all_chunks)[$i]->text;
+    my $text = ($source->get_all_chunks)[$i]->text;
+    $text =~ s/\t/    /g;
+    push @ret, $text;
   }
 
   return @ret;

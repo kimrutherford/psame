@@ -183,7 +183,8 @@ sub compare
 
 =head1 ACKNOWLEDGEMENTS
 
-This file mostly came from Text::Diff.  I added any bugs that are present.
+This file mostly came from Text::Diff.  Any bugs that are present were added 
+by kmr.
 
 =head1 AUTHOR
 

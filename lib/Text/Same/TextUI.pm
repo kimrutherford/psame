@@ -2,13 +2,32 @@ package Text::Same::TextUI;
 
 use Exporter;
 @ISA = qw( Exporter );
-@EXPORT = qw( draw_match );
+@EXPORT = qw( draw_match draw_non_matches );
 
 use warnings;
 use strict;
 use Carp;
 
 use Text::Same::ChunkedSource;
+
+sub draw_non_matches
+{
+  my $options = shift;
+  my $non_matches_ref = shift;
+  my @non_matches = @{$non_matches_ref};
+  my $source = shift;
+  my $width = $options->{term_width};
+
+  for my $non_match (@non_matches) {
+    my $start = $non_match->{start};
+    my $end = $non_match->{end};
+    my @match_chunks = _get_match_chunks($options, $start, $end, $source);
+
+    for my $match_chunk (@match_chunks) {
+      printf "%-${width}.${width}s\n", $match_chunk;
+    }
+  }
+}
 
 sub draw_match
 {

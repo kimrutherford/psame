@@ -3,7 +3,7 @@
 use strict;
 
 use Text::Same;
-use Text::Same::TextUI qw( draw_match );
+use Text::Same::TextUI qw( draw_match draw_non_matches );
 
 use Getopt::Std;
 
@@ -46,7 +46,7 @@ options:
    -S <num> only show matches with score higher than <num>
 
 The first usage compares the two files.
-The second usage compare the given file with the latest version from 
+The second usage compare the given file with the latest version from
 Subversion, CVS or RCS.
 The third usage will compare against a given version.
 USAGE
@@ -87,11 +87,19 @@ if (!defined $options{term_width}) {
   }
 }
 
-my $matchmap = compare(\%options, $ARGV[0], $ARGV[1]);
+my $file1 = $ARGV[0];
+my $file2 = $ARGV[1];
+
+my $matchmap = compare(\%options, $file1, $file2);
 
 if ($options{non_matches}) {
   my @source1_non_matches = $matchmap->source1_non_matches;
   my @source2_non_matches = $matchmap->source2_non_matches;
+
+  print "non matches in $file1:\n";
+  draw_non_matches(\%options, \@source1_non_matches, $matchmap->source1);
+  print "non matches in $file2:\n";
+  draw_non_matches(\%options, \@source2_non_matches, $matchmap->source2);
 } else {
   my @matches = $matchmap->matches;
 

@@ -8,7 +8,7 @@ use Text::Same::TextUI qw( draw_match draw_non_matches );
 use Getopt::Std;
 
 my %command_line_options = ();
-getopts('aviBbVynNs:x:S:r:', \%command_line_options);
+getopts('aviBbVynNC:s:x:S:r:', \%command_line_options);
 
 # set defaults
 my %options = (side_by_side => 1);
@@ -22,6 +22,7 @@ $options{side_by_side} = 1 if defined $command_line_options{y};
 $options{term_width} = $command_line_options{x};
 $options{min_score} = $command_line_options{S};
 $options{revision} = $command_line_options{r};
+$options{context} = $command_line_options{C};
 
 $options{show_matches} = 1;
 
@@ -68,6 +69,7 @@ options:
    -x <wid> set terminal width in columns (normally guessed)
    -r <ver> compare with <version> from SVN, CVS or RCS
    -S <num> only show matches with score higher than <num>
+   -C <num> number of lines of context
    -a       apply (a)ll useful options - sets the following options
               -B -b -i -s 2 -S 3 -N
 

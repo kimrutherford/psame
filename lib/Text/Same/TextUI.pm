@@ -24,7 +24,7 @@ sub draw_non_matches
     my @match_chunks = _get_match_chunks($options, $start, $end, $source);
 
     for my $match_chunk (@match_chunks) {
-      printf "%-${width}.${width}s\n", $match_chunk;
+      printf "  %-${width}.${width}s\n", $match_chunk;
     }
   }
 }

@@ -49,11 +49,12 @@ if (exists $command_line_options{a}) {
 sub usage
 {
   die <<USAGE;
- usage: $0 [options] file1 file2
+usage:
+  $0 [options] file1 file2
 or
- usage: $0 [options] file
+  $0 [options] file
 or
- usage: $0 [options] [-r version] file
+  $0 [options] [-r version] file
 
 options:
    -b       ignore changes in whitespace
@@ -73,7 +74,8 @@ options:
 The first usage compares the two files.
 The second usage compare the given file with the latest version from
 Subversion, CVS or RCS.
-The third usage will compare against a given version.
+The third usage will compare against a given version from Subversion, CVS or
+RCS.
 USAGE
 }
 

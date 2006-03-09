@@ -130,48 +130,26 @@ sub _find_matches($$$)
 sub compare
 {
   my $options = shift || {};
-  my @seqs = ( shift, shift );
-
-  for my $i ( 0..1 ) {
-    my $seq = $seqs[$i];
-    my $type = ref $seq;
-
-    while ( $type eq "CODE" ) {
-      $seqs[$i] = $seq = $seq->( $options );
-      $type = ref $seq;
-    }
-
-    my $AorB = !$i ? "A" : "B";
-
-    if ( $type eq "ARRAY" ) {
-      # good!
-    }
-    elsif ( $type eq "SCALAR" ) {
-      $seqs[$i] = [split( /^/m, $$seq )];
-    }
-    elsif ( ! $type ) {
-      local $/ = "\n";
-      if ($seq =~ /(rcs|svn|co).*\|/) {
-        open F, "$seq" or carp "$!: $seq";
-      } else {
-        open F, "<$seq" or carp "$!: $seq";
-      }
-      $seqs[$i] = [map {chomp; $_} (<F>)];
-      close F;
-    }
-    elsif ( $type eq "GLOB" || UNIVERSAL::isa( $seq, "IO::Handle" ) ) {
-      local $/ = "\n";
-      $seqs[$i] = [<$seq>];
-    }
-    else {
-      confess "Can't handle input of type ", ref;
-    }
-  }
+  my $data1 = shift;
+  my $data2 = shift;
 
   my $cache = new Text::Same::Cache();
 
-  my $source1 = $cache->get($seqs[0], $options);
-  my $source2 = $cache->get($seqs[1], $options);
+  my $source1;
+
+  if (ref $data1 eq "ARRAY") {
+    $source1 = _process_array("array1", $data1);
+  } else {
+    $source1 = $cache->get($data1, $options);
+  }
+
+  my $source2;
+
+  if (ref $data2 eq "ARRAY") {
+    $source2 = _process_array("array2", $data2);
+  } else {
+    $source2 = $cache->get($data2, $options);
+  }
 
   my $seen_pairs_ref = _find_matches $options, $source1, $source2;
 
@@ -180,15 +158,22 @@ sub compare
                                   seen_pairs=>$seen_pairs_ref);
 }
 
+sub _process_array
+{
+  my $name = shift;
+  my $array_ref = shift;
 
-=head1 ACKNOWLEDGEMENTS
+  my @chunks = ();
+  for (my $i = 0; $i < scalar(@{$array_ref}); ++$i) {
+    push @chunks, new Text::Same::Chunk(text=>$array_ref->[$i], indx=>$i);
+  }
 
-This file mostly came from Text::Diff.  Any bugs that are present were added 
-by kmr.
+  return new Text::Same::ChunkedSource(name=>$name, chunks=>\@chunks);
+}
 
 =head1 AUTHOR
 
-Kim Rutherford, C<< <kmr at xenu.org.uk> >>
+Kim Rutherford, C<< <kmr+same@xenu.org.uk> >>
 
 =head1 COPYRIGHT & LICENSE
 

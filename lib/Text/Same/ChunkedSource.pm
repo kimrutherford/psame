@@ -61,23 +61,25 @@ sub new
 
   my %params = @_;
 
-  my @all_chunks = _make_all_chunks($params{chunks});
-  $self->{all_chunks} = \@all_chunks;
-  $self->{all_chunks_count} = scalar(@all_chunks);
+  $self->{name} = $params{name};
+  $self->{all_chunks} = $params{chunks};
+  $self->{all_chunks_count} = scalar(@{$params{chunks}});
 
   return bless $self, $class;
 }
 
-sub _make_all_chunks
+=head2 name
+
+Title   : name
+Usage   : my $name = $source->name();
+Function: return the name of this source - generally the filename
+
+=cut
+
+sub name
 {
-  my @chunks_text = @{$_[0]};
-  my @ret = ();
-
-  for (my $i = 0; $i < scalar(@chunks_text); ++$i) {
-    push @ret, new Text::Same::Chunk(text=>$chunks_text[$i], indx=>$i);
-  }
-
-  return @ret;
+  my $self = shift;
+  return $self->{name};
 }
 
 =head2 hash

@@ -1,6 +1,106 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
+   eval 'exec /usr/bin/perl -S $0 ${1+"$@"}'
+       if $running_under_some_shell;
 
 use strict;
+use warnings;
+
+=head1 NAME
+
+psame - finds similarities between files or versions of files
+
+=head1 SYNOPSIS
+
+  psame [options] file1 file2
+  psame [options] file
+  psame [options] [-r version] file
+
+The first usage compares the two files.
+The second usage compare the given file with the latest version from
+Subversion, CVS or RCS.
+The third usage will compare against a given version from Subversion, CVS or
+RCS.
+
+=head1 DESCRIPTION
+
+
+
+=head2 Options
+
+=over 4
+
+=item B<-b>
+
+ignore changes in whitespace
+
+=item B<-i>
+
+ignore case
+
+=item B<-B>
+
+ignore blank lines
+
+=item B<-s>
+
+<num> ignore simple/short lines (ie. less than <num> chars>
+
+=item B<-y>
+
+side-by-side match view (default)
+
+=item B<-V>
+
+vertical match view
+
+=item B<-n>
+
+show non-matches instead of matches
+
+=item B<-N>
+
+show matches and non-matches
+
+=item B<-x>
+
+<wid> set terminal width in columns (normally guessed)
+
+=item B<-r>
+
+<ver> compare with <version> from SVN, CVS or RCS
+
+=item B<-S>
+
+<num> only show matches with score higher than <num>
+
+=item B<-C>
+
+<num> number of lines of context
+
+=item B<-a>
+
+apply (a)ll useful options - sets the following options:
+
+   B<-B> B<-b> B<-i> B<-s> 2 B<-S> 3 <-N>
+
+=back
+
+=head1 Examples
+
+
+=head1 TO DO
+
+
+
+=head1 BUGS
+
+None known
+
+=head1 AUTHOR
+
+Kim Rutherford <kmr+same@xenu.org.uk>
+
+=cut
 
 use Text::Same;
 use Text::Same::TextUI qw( draw_match draw_non_matches );
@@ -50,34 +150,6 @@ if (exists $command_line_options{a}) {
 sub usage
 {
   die <<USAGE;
-usage:
-  $0 [options] file1 file2
-or
-  $0 [options] file
-or
-  $0 [options] [-r version] file
-
-options:
-   -b       ignore changes in whitespace
-   -i       ignore case
-   -B       ignore blank lines
-   -s <num> ignore simple/short lines (ie. less than <num> chars>
-   -y       side-by-side match view (default)
-   -V       vertical match view
-   -n       show non-matches instead of matches
-   -N       show matches and non-matches
-   -x <wid> set terminal width in columns (normally guessed)
-   -r <ver> compare with <version> from SVN, CVS or RCS
-   -S <num> only show matches with score higher than <num>
-   -C <num> number of lines of context
-   -a       apply (a)ll useful options - sets the following options
-              -B -b -i -s 2 -S 3 -N
-
-The first usage compares the two files.
-The second usage compare the given file with the latest version from
-Subversion, CVS or RCS.
-The third usage will compare against a given version from Subversion, CVS or
-RCS.
 USAGE
 }
 
@@ -135,8 +207,6 @@ if ($options{show_non_matches}) {
   my @source1_non_matches = $matchmap->source1_non_matches;
   my @source2_non_matches = $matchmap->source2_non_matches;
 
-  print "non matches in $file1:\n";
   draw_non_matches(\%options, \@source1_non_matches, $matchmap->source1);
-  print "non matches in $file2:\n";
   draw_non_matches(\%options, \@source2_non_matches, $matchmap->source2);
 }

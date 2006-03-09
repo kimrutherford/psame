@@ -21,6 +21,8 @@ sub draw_non_matches
   for my $non_match (@non_matches) {
     my $start = $non_match->{start};
     my $end = $non_match->{end};
+
+    print "non match in ", $source->name, " ", $start, "..", $end, "\n";
     my @match_chunks = _get_match_chunks($options, $start, $end, $source);
 
     for my $match_chunk (@match_chunks) {

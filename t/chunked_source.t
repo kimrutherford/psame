@@ -178,7 +178,13 @@ my %expected =
                "text14"],
   );
 
-my $cs1 = new Text::Same::ChunkedSource(chunks=>\@t1);
+my @chunks = ();
+
+for (my $i = 0; $i < scalar(@t1); ++$i) {
+  push @chunks, new Text::Same::Chunk(text=>$t1[$i], indx=>$i);
+}
+
+my $cs1 = new Text::Same::ChunkedSource(chunks=>\@chunks);
 
 sub array_comp(\@\@)
 {

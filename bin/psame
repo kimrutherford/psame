@@ -85,13 +85,6 @@ apply (a)ll useful options - sets the following options:
 
 =back
 
-=head1 Examples
-
-
-=head1 TO DO
-
-
-
 =head1 BUGS
 
 None known
@@ -149,8 +142,8 @@ if (exists $command_line_options{a}) {
 
 sub usage
 {
-  die <<USAGE;
-USAGE
+  system("perldoc psame");
+  exit(1);
 }
 
 if (@ARGV < 1 or @ARGV > 2) {

@@ -238,7 +238,7 @@ sub get_filtered_chunks
 
   $self->_maybe_make_filtered_maps($options);
 
-  return @{$self->{filtered_chunks}{$key}};
+  return $self->{filtered_chunks}{$key};
 }
 
 =head2 get_matching_chunks
@@ -347,7 +347,7 @@ sub get_previous_chunk
     return undef;
   }
 
-  return ($self->get_filtered_chunks($options))[$prev_filtered_indx];
+  return ($self->get_filtered_chunks($options))->[$prev_filtered_indx];
 }
 
 1;

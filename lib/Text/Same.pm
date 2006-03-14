@@ -10,23 +10,13 @@ Text::Same - Look for similarities between files
 
     use Text::Same;
 
-    ## Mix and match filenames, strings, file handles, producer subs,
-    ## or arrays of records; returns an array of matches
-    my @same = same "file1.txt", "file2.txt", { ignore-whitespace => 1 };
-    my @same = same \$string1,   \$string2,   \%options;
-    my @same = same \*FH1,       \*FH2;
-    my @same = same \&reader1,   \&reader2;
-    my @same = same \@records1,  \@records2;
-
-    ## May also mix input types:
-    my @same = same \@records1,  "file_B.txt";
-
-    ...
+    my @matches = compare "file1.txt", "file2.txt", { ignore-whitespace => 1 };
+    my @matches = compare \@records1,  \@records2;
 
 =head1 DESCRIPTION
 
-C<same()> compares two files or strings and returns an array of Text::Same::Match
-objects.
+C<compare()> compares two files or arrays of strings and returns an array of 
+Text::Same::Match objects.
 
 =cut
 
@@ -98,11 +88,11 @@ sub _find_matches($$$)
 {
   my ($options, $source1, $source2) = @_;
 
-  my @source1_chunk_array = $source1->get_filtered_chunks($options);
+  my $source1_chunk_array = $source1->get_filtered_chunks($options);
 
   my %seen_pairs = ();
 
-  for my $this_chunk (@source1_chunk_array) {
+  for my $this_chunk (@$source1_chunk_array) {
     my @matching_chunks =
       $source2->get_matching_chunks($options, $this_chunk->text);
 

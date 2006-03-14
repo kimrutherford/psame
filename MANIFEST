@@ -13,7 +13,7 @@ lib/Text/Same/Cache.pm
 lib/Text/Same/Range.pm
 lib/Text/Same/ChunkedSource.pm
 lib/Text/Same/TextUI.pm
-bin/same
+bin/psame
 t/00-load.t
 t/match.t
 t/chunked_source.t

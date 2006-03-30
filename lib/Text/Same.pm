@@ -15,7 +15,7 @@ Text::Same - Look for similarities between files
 
 =head1 DESCRIPTION
 
-C<compare()> compares two files or arrays of strings and returns an array of 
+C<compare()> compares two files or arrays of strings and returns an array of
 Text::Same::Match objects.
 
 =cut
@@ -35,7 +35,6 @@ use strict;
 use Carp;
 
 use Text::Same::Match;
-use Text::Same::Chunk;
 use Text::Same::ChunkPair;
 use Text::Same::MatchMap;
 use Text::Same::Cache;
@@ -44,28 +43,32 @@ our $VERSION = '0.01';
 
 sub _process_hits($$\%\@$$)
 {
-  my ($options, $this_chunk, $seen_pairs_ref, $matching_chunks_ref,
+  my ($options, $this_chunk_indx, $seen_pairs_ref, $matching_chunk_indexes_ref,
       $this_chunked_source, $other_chunked_source) = @_;
 
-  for my $other_chunk (@$matching_chunks_ref) {
-    my $chunk_pair = new Text::Same::ChunkPair($this_chunk, $other_chunk);
+  for my $other_chunk_indx (@$matching_chunk_indexes_ref) {
+    my $chunk_pair = new Text::Same::ChunkPair($this_chunk_indx, $other_chunk_indx);
     my $pair_string = $chunk_pair->as_string();
 
     if (!exists $seen_pairs_ref->{$pair_string}) {
-      my $this_prev_chunk =
-        $this_chunked_source->get_previous_chunk($options, $this_chunk);
-      my $other_prev_chunk =
-        $other_chunked_source->get_previous_chunk($options, $other_chunk);
+      my $this_prev_chunk_indx =
+        $this_chunked_source->get_previous_chunk_indx($options, $this_chunk_indx);
+      my $other_prev_chunk_indx =
+        $other_chunked_source->get_previous_chunk_indx($options, $other_chunk_indx);
 
-      if (defined $this_prev_chunk && defined $other_prev_chunk) {
+      if (defined $this_prev_chunk_indx && defined $other_prev_chunk_indx) {
+        my $this_prev_chunk_text =
+          ($this_chunked_source->get_all_chunks)[$this_prev_chunk_indx];
+        my $other_prev_chunk_text =
+          ($other_chunked_source->get_all_chunks)[$other_prev_chunk_indx];
         my $this_prev_hash =
-          Text::Same::ChunkedSource::hash($options, $this_prev_chunk->text);
+          Text::Same::ChunkedSource::hash($options, $this_prev_chunk_text);
         my $other_prev_hash =
-          Text::Same::ChunkedSource::hash($options, $other_prev_chunk->text);
+          Text::Same::ChunkedSource::hash($options, $other_prev_chunk_text);
 
         if ($this_prev_hash eq $other_prev_hash) {
           my $prev_pair =
-            $this_prev_chunk->indx . "_" . $other_prev_chunk->indx;
+            $this_prev_chunk_indx . "<->" . $other_prev_chunk_indx;
           my $prev_match =  $seen_pairs_ref->{$prev_pair};
 
           if (defined $prev_match) {
@@ -88,17 +91,18 @@ sub _find_matches($$$)
 {
   my ($options, $source1, $source2) = @_;
 
-  my $source1_chunk_array = $source1->get_filtered_chunks($options);
+  my $source1_chunk_indexes = $source1->get_filtered_chunk_indexes($options);
 
   my %seen_pairs = ();
 
-  for my $this_chunk (@$source1_chunk_array) {
-    my @matching_chunks =
-      $source2->get_matching_chunks($options, $this_chunk->text);
+  for my $this_chunk_indx (@$source1_chunk_indexes) {
+    my $chunk_text = ($source1->get_all_chunks)[$this_chunk_indx];
+    my @matching_chunk_indexes =
+      $source2->get_matching_chunk_indexes($options, $chunk_text);
 
-    if (@matching_chunks) {
-      _process_hits($options, $this_chunk, %seen_pairs, @matching_chunks,
-                    $source1, $source2);
+    if (@matching_chunk_indexes) {
+      _process_hits($options, $this_chunk_indx, %seen_pairs,
+                    @matching_chunk_indexes, $source1, $source2);
     }
   }
 
@@ -112,7 +116,7 @@ sub _find_matches($$$)
         or
            $results = $chunk->compare($options, \@array1, \@array2)
            $all_match = $results->all_matches;
- Function: return a MatchMap object holding matches between the two given 
+ Function: return a MatchMap object holding matches between the two given
            files or arrays of strings
 
 =cut
@@ -128,7 +132,7 @@ sub compare
   my $source1;
 
   if (ref $data1 eq "ARRAY") {
-    $source1 = _process_array("array1", $data1);
+    $source1 = new Text::Same::ChunkedSource(name=>"array1", chunks=>$data1);
   } else {
     $source1 = $cache->get($data1, $options);
   }
@@ -136,7 +140,7 @@ sub compare
   my $source2;
 
   if (ref $data2 eq "ARRAY") {
-    $source2 = _process_array("array2", $data2);
+    $source2 = new Text::Same::ChunkedSource(name=>"array2", chunks=>$data2);
   } else {
     $source2 = $cache->get($data2, $options);
   }
@@ -148,18 +152,6 @@ sub compare
                                   seen_pairs=>$seen_pairs_ref);
 }
 
-sub _process_array
-{
-  my $name = shift;
-  my $array_ref = shift;
-
-  my @chunks = ();
-  for (my $i = 0; $i < scalar(@{$array_ref}); ++$i) {
-    push @chunks, new Text::Same::Chunk(text=>$array_ref->[$i], indx=>$i);
-  }
-
-  return new Text::Same::ChunkedSource(name=>$name, chunks=>\@chunks);
-}
 
 =head1 AUTHOR
 

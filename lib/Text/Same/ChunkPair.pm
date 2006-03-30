@@ -4,11 +4,11 @@ Text::Same::ChunkPair
 
 =head1 DESCRIPTION
 
-A class representing a pair of Chunk objects
+A class representing a pair of chunk indexes
 
 =head1 SYNOPSIS
 
-  my $pair = new Text::Same::ChunkPair($chunk1, $chunk2);
+  my $pair = new Text::Same::ChunkPair($chunk_index1, $chunk_index2);
 
 =head1 METHODS
 
@@ -39,10 +39,10 @@ use Carp;
 =head2 new
 
  Title   : new
- Usage   : $pair = new Text::Same::ChunkPair($chunk1, $chunk2);
- Function: Creates a new ChunkPair object from two Chunk objects
+ Usage   : $pair = new Text::Same::ChunkPair($chunk_index1, $chunk_index2);
+ Function: Creates a new ChunkPair object from two chunk indexes
  Returns : A Text::Same::ChunkPair object
- Args    : two Chunks
+ Args    : two chunk indexes
 
 =cut
 
@@ -59,38 +59,34 @@ sub new
     croak "undefined value passed to ChunkPair->new\n";
   }
 
-  if (!ref $_[0] || !ref $_[1]) {
-    croak "non-Chunks passed to ChunkPair->new\n";
-  }
-
   return bless [@_], $class;
 }
 
-=head2 chunk1
+=head2 chunk_index1
 
- Title   : chunk1
- Usage   : my $chunk = $match->chunk1;
- Function: return the first Chunk of this ChunkPair
+ Title   : chunk_index1
+ Usage   : my $chunk_index = $match->chunk_index1;
+ Function: return the first Chunk_Index of this ChunkPair
  Args    : none
 
 =cut
 
-sub chunk1
+sub chunk_index1
 {
   my $self = shift;
   return $self->[0];
 }
 
-=head2 chunk2
+=head2 chunk_index2
 
- Title   : chunk2
- Usage   : my $chunk = $match->chunk2;
- Function: return the second Chunk of this ChunkPair
+ Title   : chunk_index2
+ Usage   : my $chunk_index = $match->chunk_index2;
+ Function: return the second chunk_Index of this ChunkPair
  Args    : none
 
 =cut
 
-sub chunk2
+sub chunk_index2
 {
   my $self = shift;
   return $self->[1];
@@ -108,7 +104,7 @@ sub chunk2
 sub as_string
 {
   my $self = shift;
-  return $self->[0]->indx . "_" . $self->[1]->indx;
+  return $self->[0] . "<->" . $self->[1];
 }
 
 1;

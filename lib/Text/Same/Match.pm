@@ -129,20 +129,20 @@ sub _update_stats
   my @new_pairs = @_;
 
   for my $chunk_pair (@new_pairs) {
-    my $chunk1 = $chunk_pair->chunk1;
-    my $chunk2 = $chunk_pair->chunk2;
+    my $chunk_index1 = $chunk_pair->chunk_index1;
+    my $chunk_index2 = $chunk_pair->chunk_index2;
 
-    if ($chunk1->indx < $self->{min1}) {
-      $self->{min1} = $chunk1->indx;
+    if ($chunk_index1 < $self->{min1}) {
+      $self->{min1} = $chunk_index1;
     }
-    if ($chunk1->indx > $self->{max1}) {
-      $self->{max1} = $chunk1->indx;
+    if ($chunk_index1 > $self->{max1}) {
+      $self->{max1} = $chunk_index1;
     }
-    if ($chunk2->indx < $self->{min2}) {
-      $self->{min2} = $chunk2->indx;
+    if ($chunk_index2 < $self->{min2}) {
+      $self->{min2} = $chunk_index2;
     }
-    if ($chunk2->indx > $self->{max2}) {
-      $self->{max2} = $chunk2->indx;
+    if ($chunk_index2 > $self->{max2}) {
+      $self->{max2} = $chunk_index2;
     }
   }
 }
@@ -152,8 +152,8 @@ sub _update_stats
 
  Title   : min1
  Usage   : $match->min1;
- Function: return the minimum index of the chunks in the first of the
-           ChunkedSources held in this Match
+ Function: return the minimum index of the chunks in the first (ie. left) of
+           the ChunkedSources held in this Match
  Args    : None
 
 =cut
@@ -167,8 +167,8 @@ sub min1
 
  Title   : max1
  Usage   : $match->max1;
- Function: return the maximum index of the chunks in the first of the
-           ChunkedSources held in this Match
+ Function: return the maximum index of the chunks in the first (ie. left) of
+           the ChunkedSources held in this Match
  Args    : None
 
 =cut
@@ -182,8 +182,8 @@ sub max1
 
  Title   : min2
  Usage   : $match->min2;
- Function: return the minimum index of the chunks in the second of the
-           ChunkedSources held in this Match
+ Function: return the minimum index of the chunks in the second (ie. right) of
+           the ChunkedSources held in this Match
  Args    : None
 
 =cut
@@ -197,8 +197,8 @@ sub min2
 
  Title   : max2
  Usage   : $match->max2;
- Function: return the maximum index of the chunks in the second of the
-           ChunkedSources held in this Match
+ Function: return the maximum index of the chunks in the second (ie. right) of
+           the ChunkedSources held in this Match
  Args    : None
 
 =cut

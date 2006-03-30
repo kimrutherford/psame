@@ -178,13 +178,7 @@ my %expected =
                "text14"],
   );
 
-my @chunks = ();
-
-for (my $i = 0; $i < scalar(@t1); ++$i) {
-  push @chunks, new Text::Same::Chunk(text=>$t1[$i], indx=>$i);
-}
-
-my $cs1 = new Text::Same::ChunkedSource(chunks=>\@chunks);
+my $cs1 = new Text::Same::ChunkedSource(chunks=>\@t1);
 
 sub array_comp(\@\@)
 {
@@ -214,12 +208,12 @@ for my $ignore_space (0..1) {
 
       my @cs1_chunk_hashes =
         map {
-          Text::Same::ChunkedSource::hash($options, $_->text())
-        } @{$cs1->get_filtered_chunks($options)};
+          my $text = ($cs1->get_all_chunks)[$_];
+          Text::Same::ChunkedSource::hash($options, $text)
+        } @{$cs1->get_filtered_chunk_indexes($options)};
       my @comp_chunk_hashes = map {Text::Same::ChunkedSource::_hash($_)} @comp_array;
 
       ok(array_comp(@cs1_chunk_hashes, @comp_chunk_hashes));
-
     }
   }
 }

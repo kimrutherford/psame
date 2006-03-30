@@ -118,7 +118,7 @@ sub _get_match_chunks
   my @ret = ();
 
   for (my $i = $min; $i <= $max; $i++) {
-    my $text = ($source->get_all_chunks)[$i]->text;
+    my $text = ($source->get_all_chunks)[$i];
     $text =~ s/\t/    /g;
     push @ret, $text;
   }
@@ -139,7 +139,7 @@ sub _get_start_context
     if ($i < 0) {
       push @ret, undef;
     } else {
-      push @ret, ($source->get_all_chunks)[$i]->text;
+      push @ret, ($source->get_all_chunks)[$i];
     }
   }
 
@@ -159,7 +159,7 @@ sub _get_end_context
     if ($i > $source->get_all_chunks_count - 1) {
       push @ret, undef;
     } else {
-      push @ret, ($source->get_all_chunks)[$i]->text;
+      push @ret, ($source->get_all_chunks)[$i];
     }
   }
 
@@ -194,7 +194,7 @@ sub _draw_range_and_context
   }
 
   for (my $i = $min; $i <= $max; $i++) {
-    my $match_chunk_text = ($source->get_all_chunks)[$i]->text;
+    my $match_chunk_text = ($source->get_all_chunks)[$i];
     $ret .= "=  $match_chunk_text\n";
   }
 

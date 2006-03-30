@@ -10,6 +10,7 @@ WriteMakefile(
     PL_FILES            => {},
     EXE_FILES           => ["bin/psame"],
     PREREQ_PM => {
+                  'Tie::File' => 0,
                   'Test::More' => 0,
                   'Term::Size' => 0,
                  },

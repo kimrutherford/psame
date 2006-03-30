@@ -46,9 +46,9 @@ use Digest::MD5 qw(md5);
 
  Title   : new
  Usage   : $source = new Text::Same::ChunkedSource(chunks->\@chunks)
- Function: Creates a new ChunkedSource object from an array of Chunks
+ Function: Creates a new ChunkedSource object from an array
  Returns : A Text::Same::ChunkedSource object
- Args    : chunks - an array of Chunk objects
+ Args    : chunks - an array of strings
 
 =cut
 
@@ -146,7 +146,7 @@ sub _make_chunk_maps
   my $self = shift;
   my $options = shift;
 
-  my @filtered_chunks = ();
+  my @filtered_chunk_indexes = ();
   my %filtered_hash = ();
   my %real_index_to_filtered_index = ();
   my %filtered_index_to_real_index = ();
@@ -156,19 +156,18 @@ sub _make_chunk_maps
 
   for (my $i = 0; $i < scalar(@all_chunks); $i++) {
     my $chunk = $self->{all_chunks}[$i];
-    my $text = $chunk->text;
-    if (!($options->{ignore_blanks} && $text =~ m!^\s*$!) &&
-        !_is_simple($options, $text)) {
-      push @filtered_chunks, $chunk;
+    if (!($options->{ignore_blanks} && $chunk =~ m!^\s*$!) &&
+        !_is_simple($options, $chunk)) {
+      push @filtered_chunk_indexes, $i;
       $real_index_to_filtered_index{$i} = $filtered_chunk_count;
       $filtered_index_to_real_index{$filtered_chunk_count} = $i;
 
-      push @{$filtered_hash{hash($options, $text)}}, $chunk;
+      push @{$filtered_hash{hash($options, $chunk)}}, $i;
       $filtered_chunk_count++;
     }
   }
 
-  return \@filtered_chunks, \%filtered_hash,
+  return \@filtered_chunk_indexes, \%filtered_hash,
          \%real_index_to_filtered_index, \%filtered_index_to_real_index;
 }
 
@@ -210,7 +209,7 @@ sub _maybe_make_filtered_maps
   my $key = $self->_get_map_key_from_options($options);
 
   if (!exists $self->{filtered_chunks}{$key}) {
-    ($self->{filtered_chunks}{$key},
+    ($self->{filtered_chunk_indexes}{$key},
      $self->{filtered_hash}{$key},
      $self->{real_to_filtered}{$key},
      $self->{filtered_to_real}{$key}) = $self->_make_chunk_maps($options);
@@ -218,10 +217,10 @@ sub _maybe_make_filtered_maps
   }
 }
 
-=head2 get_filtered_chunks
+=head2 get_filtered_chunk_indexes
 
- Title   : get_filtered_chunks
- Usage   : $filtered_chunks = $source->get_filtered_chunks($options);
+ Title   : get_filtered_chunk_indexes
+ Usage   : $filtered_chunk_indexes = $source->get_filtered_chunk_indexes($options);
  Function: return (in order) the chunks from this source that match the given
            options:
             ignore_case=> (0 or 1)    -- ignore case when comparing
@@ -229,7 +228,7 @@ sub _maybe_make_filtered_maps
             ignore_space=> (0 or 1)   -- ignore whitespace in chunks
 =cut
 
-sub get_filtered_chunks
+sub get_filtered_chunk_indexes
 {
   my $self = shift;
   my $options = shift;
@@ -238,13 +237,13 @@ sub get_filtered_chunks
 
   $self->_maybe_make_filtered_maps($options);
 
-  return $self->{filtered_chunks}{$key};
+  return $self->{filtered_chunk_indexes}{$key};
 }
 
-=head2 get_matching_chunks
+=head2 get_matching_chunk_indexes
 
- Title   : get_matching_chunks
- Usage   : $matching_chunks = $source->get_matching_chunks($options, $text);
+ Title   : get_matching_chunk_indexes
+ Usage   : $matches = $source->get_matching_chunk_indexes($options, $text);
  Function: return (in order) the chunks from this source that match the given
            text.
            options:
@@ -253,7 +252,7 @@ sub get_filtered_chunks
             ignore_space=> (0 or 1)   -- ignore whitespace in chunks
 =cut
 
-sub get_matching_chunks
+sub get_matching_chunk_indexes
 {
   my $self = shift;
   my $options = shift;
@@ -326,28 +325,30 @@ sub get_real_indx_from_filtered
   return $self->{real_to_filtered}{$key}{$filtered_indx};
 }
 
-=head2 get_previous_chunk
+=head2 get_previous_chunk_indx
 
- Title   : get_previous_chunk
- Usage   : $prev_chunk = $source->get_previous_chunk($options, $chunk);
- Function: return previous chunk from the list of filtered chunks (for the
-           given $options).  See discussion above.
+ Title   : get_previous_chunk_indx
+ Usage   : $prev_chunk_indx =
+               $source->get_previous_chunk_indx($options, $chunk_indx);
+ Function: return the previous chunk index from the list of filtered chunk
+           indexes (for the given $options).  See discussion above.
+
 =cut
 
-sub get_previous_chunk
+sub get_previous_chunk_indx
 {
   my $self = shift;
   my $options = shift;
-  my $chunk = shift;
+  my $chunk_indx = shift;
 
   my $prev_filtered_indx =
-    $self->get_filtered_indx_from_real($options, $chunk->indx) - 1;
+    $self->get_filtered_indx_from_real($options, $chunk_indx) - 1;
 
   if ($prev_filtered_indx < 0) {
     return undef;
   }
 
-  return ($self->get_filtered_chunks($options))->[$prev_filtered_indx];
+  return ($self->get_filtered_chunk_indexes($options))->[$prev_filtered_indx];
 }
 
 1;

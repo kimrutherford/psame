@@ -18,23 +18,23 @@ sub get
   my $self = shift;
 
   my $filename = shift;
-  my @lines;
+  my @lines = ();
 
   local $/ = "\n";
   if ($filename =~ /(rcs|svn|co).*\|/) {
     open F, "$filename" or carp "$!: $filename";
+
+    @lines = map {chomp; $_} (<F>);
   } else {
-    open F, "<$filename" or carp "$!: $filename";
+    eval "require Tie::File; tie @lines, 'Tie::File'";
+
+    if ($@) {
+      # Tie::File is not available
+      open F, "<$filename" or carp "$!: $filename"; 
+      @lines = map {chomp; $_} (<F>);
+    }
   }
-  @lines = map {chomp; $_} (<F>);
-
-  my @chunks = ();
-
-  for (my $i = 0; $i < scalar(@lines); ++$i) {
-    push @chunks, new Text::Same::Chunk(text=>$lines[$i], indx=>$i);
-  }
-
-  return new Text::Same::ChunkedSource(name=>$filename, chunks=>\@chunks);
+  return new Text::Same::ChunkedSource(name=>$filename, chunks=>\@lines);
 }
 
 =head1 AUTHOR

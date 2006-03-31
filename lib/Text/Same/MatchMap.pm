@@ -17,22 +17,20 @@ sub new
   my %uniq_matches = ();
 
   for my $match (@matches) {
-    my @ranges = $match->ranges;
-    $uniq_matches{"@ranges"} = $match;
+    $uniq_matches{$match} = $match;
   }
+
 
   my @sorted_matches =
     sort {
-      $a->min1 <=> $b->min1
+      $a->{min1} <=> $b->{min1}
         ||
-      $a->min2 <=> $b->min2;
+      $a->{min2} <=> $b->{min2};
     } values %uniq_matches;
 
   $self->{matches} = \@sorted_matches;
 
   bless $self, $class;
-
-  $self->_find_unmatched_chunks($self->{source1}, $self->{source2});
 
   return $self;
 }
@@ -124,12 +122,18 @@ sub matches
 sub source1_non_matches
 {
   my $self = shift;
+  if (!defined $self->{source1_non_matches}) {
+    $self->_find_unmatched_chunks($self->{source1}, $self->{source2});
+  }
   return @{$self->{source1_non_matches}};
 }
 
 sub source2_non_matches
 {
   my $self = shift;
+  if (!defined $self->{source2_non_matches}) {
+    $self->_find_unmatched_chunks($self->{source1}, $self->{source2});
+  }
   return @{$self->{source2_non_matches}};
 }
 

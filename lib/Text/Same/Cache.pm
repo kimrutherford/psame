@@ -26,13 +26,13 @@ sub get
 
     @lines = map {chomp; $_} (<F>);
   } else {
-    eval "require Tie::File; tie @lines, 'Tie::File'";
+#     eval q{require Tie::File; tie @lines, 'Tie::File', $filename};
 
-    if ($@) {
-      # Tie::File is not available
+#     if ($@) {
+#       warn "Tie::File is not available - emulating (error was $@)\n";
       open F, "<$filename" or carp "$!: $filename"; 
       @lines = map {chomp; $_} (<F>);
-    }
+#    }
   }
   return new Text::Same::ChunkedSource(name=>$filename, chunks=>\@lines);
 }

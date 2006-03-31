@@ -52,21 +52,23 @@ sub new
   my $class = ref($self) || $self;
 
   if (scalar(@_) != 2) {
-    die "ChunkPair constructor needs 2 arguments\n";
+    die "ChunkPair constructor needs 2 integer arguments\n";
   }
 
   if (!defined $_[0] || !defined $_[1]) {
     croak "undefined value passed to ChunkPair->new\n";
   }
 
-  return bless [@_], $class;
+  my $packed_pair = make_packed_representation(@_);
+
+  return bless \$packed_pair, $class;
 }
 
 =head2 chunk_index1
 
  Title   : chunk_index1
  Usage   : my $chunk_index = $match->chunk_index1;
- Function: return the first Chunk_Index of this ChunkPair
+ Function: return the first Chunk_index of this ChunkPair
  Args    : none
 
 =cut
@@ -74,14 +76,14 @@ sub new
 sub chunk_index1
 {
   my $self = shift;
-  return $self->[0];
+  return (unpack 'II', $$self)[0];
 }
 
 =head2 chunk_index2
 
  Title   : chunk_index2
  Usage   : my $chunk_index = $match->chunk_index2;
- Function: return the second chunk_Index of this ChunkPair
+ Function: return the second chunk_index of this ChunkPair
  Args    : none
 
 =cut
@@ -89,7 +91,18 @@ sub chunk_index1
 sub chunk_index2
 {
   my $self = shift;
-  return $self->[1];
+  return (unpack 'II', $$self)[1];
+}
+
+sub packed_representation
+{
+  my $self = shift;
+  return $$self;
+}
+
+sub make_packed_representation
+{
+  return pack 'II', @_;
 }
 
 =head2 as_string
@@ -104,7 +117,7 @@ sub chunk_index2
 sub as_string
 {
   my $self = shift;
-  return $self->[0] . "<->" . $self->[1];
+  return $self->chunk_index1 . "<->" . $self->chunk_index2;
 }
 
 1;

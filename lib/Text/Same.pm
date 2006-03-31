@@ -48,9 +48,9 @@ sub _process_hits($$\%\@$$)
 
   for my $other_chunk_indx (@$matching_chunk_indexes_ref) {
     my $chunk_pair = new Text::Same::ChunkPair($this_chunk_indx, $other_chunk_indx);
-    my $pair_string = $chunk_pair->as_string();
+    my $pair_id = $chunk_pair->packed_representation;
 
-    if (!exists $seen_pairs_ref->{$pair_string}) {
+    if (!exists $seen_pairs_ref->{$pair_id}) {
       my $this_prev_chunk_indx =
         $this_chunked_source->get_previous_chunk_indx($options, $this_chunk_indx);
       my $other_prev_chunk_indx =
@@ -58,22 +58,23 @@ sub _process_hits($$\%\@$$)
 
       if (defined $this_prev_chunk_indx && defined $other_prev_chunk_indx) {
         my $this_prev_chunk_text =
-          ($this_chunked_source->get_all_chunks)[$this_prev_chunk_indx];
+          $this_chunked_source->get_chunk_by_indx($this_prev_chunk_indx);
         my $other_prev_chunk_text =
-          ($other_chunked_source->get_all_chunks)[$other_prev_chunk_indx];
+          $other_chunked_source->get_chunk_by_indx($other_prev_chunk_indx);
         my $this_prev_hash =
           Text::Same::ChunkedSource::hash($options, $this_prev_chunk_text);
         my $other_prev_hash =
           Text::Same::ChunkedSource::hash($options, $other_prev_chunk_text);
 
         if ($this_prev_hash eq $other_prev_hash) {
-          my $prev_pair =
-            $this_prev_chunk_indx . "<->" . $other_prev_chunk_indx;
-          my $prev_match =  $seen_pairs_ref->{$prev_pair};
+          my $prev_pair_id =
+            Text::Same::ChunkPair::make_packed_representation($this_prev_chunk_indx,
+                                                              $other_prev_chunk_indx);
+          my $prev_match =  $seen_pairs_ref->{$prev_pair_id};
 
           if (defined $prev_match) {
             $prev_match->add($chunk_pair);
-            $seen_pairs_ref->{$pair_string} = $prev_match;
+            $seen_pairs_ref->{$pair_id} = $prev_match;
             next;
           }
         }
@@ -82,7 +83,7 @@ sub _process_hits($$\%\@$$)
       my $match = new Text::Same::Match(source1=>$this_chunked_source,
                                         source2=>$other_chunked_source,
                                         pairs=>[$chunk_pair]);
-      $seen_pairs_ref->{$pair_string} = $match;
+      $seen_pairs_ref->{$pair_id} = $match;
     }
   }
 }
@@ -96,7 +97,7 @@ sub _find_matches($$$)
   my %seen_pairs = ();
 
   for my $this_chunk_indx (@$source1_chunk_indexes) {
-    my $chunk_text = ($source1->get_all_chunks)[$this_chunk_indx];
+    my $chunk_text = $source1->get_chunk_by_indx($this_chunk_indx);
     my @matching_chunk_indexes =
       $source2->get_matching_chunk_indexes($options, $chunk_text);
 

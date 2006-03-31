@@ -127,6 +127,13 @@ sub get_all_chunks
   return @{$self->{all_chunks}};
 }
 
+sub get_chunk_by_indx
+{
+  my $self = shift;
+  my $chunk_indx = shift;
+  return $self->{all_chunks}[$chunk_indx];
+}
+
 =head2 get_all_chunks_count
 
  Title   : get_all_chunks_count
@@ -151,10 +158,9 @@ sub _make_chunk_maps
   my %real_index_to_filtered_index = ();
   my %filtered_index_to_real_index = ();
 
-  my @all_chunks = @{$self->{all_chunks}};
   my $filtered_chunk_count = 0;
 
-  for (my $i = 0; $i < scalar(@all_chunks); $i++) {
+  for (my $i = 0; $i < scalar(@{$self->{all_chunks}}); $i++) {
     my $chunk = $self->{all_chunks}[$i];
     if (!($options->{ignore_blanks} && $chunk =~ m!^\s*$!) &&
         !_is_simple($options, $chunk)) {
@@ -184,6 +190,7 @@ sub _is_simple($$)
   return 0;
 }
 
+
 sub _get_map_key_from_options
 {
   my $self = shift;
@@ -208,7 +215,7 @@ sub _maybe_make_filtered_maps
 
   my $key = $self->_get_map_key_from_options($options);
 
-  if (!exists $self->{filtered_chunks}{$key}) {
+  if (!exists $self->{filtered_chunk_indexes}{$key}) {
     ($self->{filtered_chunk_indexes}{$key},
      $self->{filtered_hash}{$key},
      $self->{real_to_filtered}{$key},

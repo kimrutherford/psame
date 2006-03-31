@@ -16,7 +16,7 @@ sub draw_non_matches
   my $non_matches_ref = shift;
   my @non_matches = @{$non_matches_ref};
   my $source = shift;
-  my $width = $options->{term_width};
+  my $screen_width = $options->{term_width} - 2;
 
   for my $non_match (@non_matches) {
     my $start = $non_match->{start};
@@ -26,7 +26,8 @@ sub draw_non_matches
     my @match_chunks = _get_match_chunks($options, $start, $end, $source);
 
     for my $match_chunk (@match_chunks) {
-      printf "  %-${width}.${width}s\n", $match_chunk;
+      $match_chunk = substr $match_chunk, 0, $screen_width;
+      printf "  $match_chunk\n";
     }
   }
 }

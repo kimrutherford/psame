@@ -211,7 +211,7 @@ for my $ignore_space (0..1) {
           my $text = ($cs1->get_all_chunks)[$_];
           Text::Same::ChunkedSource::hash($options, $text)
         } @{$cs1->get_filtered_chunk_indexes($options)};
-      my @comp_chunk_hashes = map {Text::Same::ChunkedSource::_hash($_)} @comp_array;
+      my @comp_chunk_hashes = map {Text::Same::ChunkedSource::hash({}, $_)} @comp_array;
 
       ok(array_comp(@cs1_chunk_hashes, @comp_chunk_hashes));
     }

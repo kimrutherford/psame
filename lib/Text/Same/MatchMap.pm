@@ -20,7 +20,6 @@ sub new
     $uniq_matches{$match} = $match;
   }
 
-
   my @sorted_matches =
     sort {
       $a->{min1} <=> $b->{min1}

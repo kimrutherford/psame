@@ -103,13 +103,6 @@ sub hash
     $text =~ s/\s+/ /g;
     $text =~ s/\s+$//;
   }
-  return _hash($text);
-}
-
-sub _hash
-{
-  my $text = shift;
-
   return md5($text);
 }
 

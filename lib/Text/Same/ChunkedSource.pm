@@ -38,8 +38,6 @@ use warnings;
 use strict;
 use Carp;
 
-use Text::Same::Chunk;
-
 use Digest::MD5 qw(md5);
 
 =head2 new

@@ -82,10 +82,8 @@ sub new
 sub add
 {
   my $self = shift;
-  for my $chunk_pair (@_) {
-    $self->_update_stats($chunk_pair);
-    push @{$self->{pairs}}, $chunk_pair;
-  }
+  $self->_update_stats(@_);
+  push @{$self->{pairs}}, @_;
   $self;
 }
 

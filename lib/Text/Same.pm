@@ -1,7 +1,5 @@
 package Text::Same;
 
-$VERSION = 0.01;
-
 =head1 NAME
 
 Text::Same - Look for similarities between files
@@ -25,23 +23,23 @@ Text::Same::Match objects.
 
 =cut
 
-
-use Exporter;
-@ISA = qw( Exporter );
-@EXPORT = qw( compare find );
-
 use warnings;
 use strict;
 use Carp;
+use vars qw($VERSION @ISA @EXPORT);
+use Exporter;
+
+@ISA = qw( Exporter );
+@EXPORT = qw( compare );
 
 use Text::Same::Match;
 use Text::Same::ChunkPair;
 use Text::Same::MatchMap;
 use Text::Same::Cache;
 
-our $VERSION = '0.01';
+$VERSION = '0.01';
 
-sub _process_hits($$\%\@$$)
+sub _process_hits
 {
   my ($options, $this_chunk_indx, $seen_pairs_ref, $matching_chunk_indexes_ref,
       $this_chunked_source, $other_chunked_source) = @_;
@@ -102,8 +100,8 @@ sub _find_matches($$$)
       $source2->get_matching_chunk_indexes($options, $chunk_text);
 
     if (@matching_chunk_indexes) {
-      _process_hits($options, $this_chunk_indx, %seen_pairs,
-                    @matching_chunk_indexes, $source1, $source2);
+      _process_hits($options, $this_chunk_indx, \%seen_pairs,
+                    \@matching_chunk_indexes, $source1, $source2);
     }
   }
 
@@ -116,7 +114,7 @@ sub _find_matches($$$)
  Usage   : $results = $chunk->compare($options, $file1, $file2)
         or
            $results = $chunk->compare($options, \@array1, \@array2)
-           $all_match = $results->all_matches;
+           @all_matches = $results->all_matches;
  Function: return a MatchMap object holding matches between the two given
            files or arrays of strings
 
@@ -156,7 +154,7 @@ sub compare
 
 =head1 AUTHOR
 
-Kim Rutherford, C<< <kmr+same@xenu.org.uk> >>
+Kim Rutherford <kmr+same@xenu.org.uk>
 
 =head1 COPYRIGHT & LICENSE
 

@@ -1,8 +1,30 @@
+=head1 NAME
+
+Text::Same::MatchMap
+
+=head1 DESCRIPTION
+
+
+=head1 SYNOPSIS
+
+
+=head1 METHODS
+
+See below.  Methods private to this module are prefixed by an
+underscore.
+
+=cut
+
 package Text::Same::MatchMap;
 
 use warnings;
 use strict;
 use Carp;
+
+use vars qw($VERSION);
+$VERSION = '0.01';
+
+use Text::Same::Range;
 
 sub new
 {
@@ -99,7 +121,7 @@ sub _get_non_matches
    for (my $i = 1; $i < $max_chunk; $i++) {
      if (defined $current_min) {
        if (exists $indx_to_matches{$i}) {
-         push @non_matches, {start=>$current_min, end=>$i-1};
+         push @non_matches, new Text::Same::Range($current_min, $i-1);
          $current_min = undef;
        }
      } else {
@@ -135,5 +157,23 @@ sub source2_non_matches
   }
   return @{$self->{source2_non_matches}};
 }
+
+=head1 AUTHOR
+
+Kim Rutherford <kmr+same@xenu.org.uk>
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2005,2006 Kim Rutherford.  All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=head1 DISCLAIMER
+
+This module is provided "as is" without warranty of any kind. It
+may redistributed under the same conditions as Perl itself.
+
+=cut
 
 1;

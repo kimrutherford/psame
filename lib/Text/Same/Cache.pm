@@ -1,8 +1,27 @@
+=head1 NAME
+
+Text::Same::Cache
+
+=head1 DESCRIPTION
+
+
+=head1 SYNOPSIS
+
+=head1 METHODS
+
+See below.  Methods private to this module are prefixed by an
+underscore.
+
+=cut
+
 package Text::Same::Cache;
 
 use warnings;
 use strict;
 use Carp;
+
+use vars qw($VERSION);
+$VERSION = '0.01';
 
 use Text::Same::ChunkedSource;
 
@@ -34,14 +53,19 @@ sub get
 
 =head1 AUTHOR
 
-Kim Rutherford, C<< <kmr at xenu.org.uk> >>
+Kim Rutherford <kmr+same@xenu.org.uk>
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2005,2006 Kim Rutherford, all rights reserved.
+Copyright 2005,2006 Kim Rutherford.  All rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
+
+=head1 DISCLAIMER
+
+This module is provided "as is" without warranty of any kind. It
+may redistributed under the same conditions as Perl itself.
 
 =cut
 

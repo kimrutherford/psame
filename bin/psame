@@ -5,6 +5,10 @@
 use strict;
 use warnings;
 
+use vars qw($VERSION);
+
+$VERSION = '0.01';
+
 =head1 NAME
 
 psame - finds similarities between files or versions of files
@@ -21,8 +25,10 @@ Subversion, CVS or RCS.
 The third usage will compare against a given version from Subversion, CVS or
 RCS.
 
-=head1 DESCRIPTION
+By default, the output with be a side-by-side view of matching regions with a
+few lines of context.
 
+=head1 DESCRIPTION
 
 
 =head2 Options
@@ -89,6 +95,15 @@ apply (a)ll useful options - sets the following options:
 
 None known
 
+=head1 LIMITATIONS
+
+The code works well with small input files (up to 10,000 lines or so), but is
+too slow and memory intensive for larger files.
+
+=head1 TO DO
+
+Output formatting should maybe be done with Perl6::Form
+
 =head1 AUTHOR
 
 Kim Rutherford <kmr+same@xenu.org.uk>
@@ -96,7 +111,7 @@ Kim Rutherford <kmr+same@xenu.org.uk>
 =cut
 
 use Text::Same;
-use Text::Same::TextUI qw( draw_match draw_non_matches );
+use Text::Same::TextUI qw( draw_match draw_non_match );
 
 use Getopt::Std;
 
@@ -105,6 +120,19 @@ getopts('aviBbVynNC:s:x:S:r:', \%command_line_options);
 
 # set defaults
 my %options = (side_by_side => 1);
+
+$options{show_matches} = 1;
+
+if (exists $command_line_options{a}) {
+  $options{ignore_case} = 1;
+  $options{ignore_blanks} = 1;
+  $options{ignore_space} = 1;
+  $options{ignore_simple} = 2;
+  $options{side_by_side} = 1;
+  $options{min_score} = 3;
+  $options{show_matches} = 1;
+  $options{show_non_matches} = 1;
+}
 
 $options{ignore_case} = $command_line_options{i};
 $options{ignore_blanks} = $command_line_options{B};
@@ -117,25 +145,12 @@ $options{min_score} = $command_line_options{S};
 $options{revision} = $command_line_options{r};
 $options{context} = $command_line_options{C};
 
-$options{show_matches} = 1;
-
 if (exists $command_line_options{n}) {
   $options{show_non_matches} = 1;
   $options{show_matches} = 0;
 }
 
 if (exists $command_line_options{N}) {
-  $options{show_matches} = 1;
-  $options{show_non_matches} = 1;
-}
-
-if (exists $command_line_options{a}) {
-  $options{ignore_case} = 1;
-  $options{ignore_blanks} = 1;
-  $options{ignore_space} = 1;
-  $options{ignore_simple} = 2;
-  $options{side_by_side} = 1;
-  $options{min_score} = 3;
   $options{show_matches} = 1;
   $options{show_non_matches} = 1;
 }
@@ -200,6 +215,12 @@ if ($options{show_non_matches}) {
   my @source1_non_matches = $matchmap->source1_non_matches;
   my @source2_non_matches = $matchmap->source2_non_matches;
 
-  draw_non_matches(\%options, \@source1_non_matches, $matchmap->source1);
-  draw_non_matches(\%options, \@source2_non_matches, $matchmap->source2);
+  print "non matches in ", $matchmap->source1()->name, ":\n";
+  for my $non_match (@source1_non_matches) {
+    draw_non_match(\%options, $matchmap->source1, $non_match);
+  }
+  print "non matches in ", $matchmap->source2()->name, ":\n";
+  for my $non_match (@source2_non_matches) {
+    draw_non_match(\%options, $matchmap->source2, $non_match);
+  }
 }

@@ -1,34 +1,67 @@
+=head1 NAME
+
+Text::Same::TextUI
+
+=head1 DESCRIPTION
+
+
+=head1 SYNOPSIS
+
+
+=head1 METHODS
+
+See below.  Methods private to this module are prefixed by an
+underscore.
+
+=cut
+
 package Text::Same::TextUI;
 
 use Exporter;
+use vars qw($VERSION @EXPORT @ISA);
 @ISA = qw( Exporter );
-@EXPORT = qw( draw_match draw_non_matches );
+@EXPORT = qw( draw_match draw_non_match );
 
 use warnings;
 use strict;
 use Carp;
 
+$VERSION = '0.01';
+
 use Text::Same::ChunkedSource;
 
-sub draw_non_matches
+# =head2 draw_non_matches
+
+# Title   : draw_non_matches
+# Usage   : use Text::Same::TextUI;
+#           ...
+#           my $matchmap = compare(\%options, $file1, $file2);
+#           my @source1_non_matches = $matchmap->source1_non_matches;
+#           my @source2_non_matches = $matchmap->source2_non_matches;
+#           draw_non_matches(\%options, \@source1_non_matches, $matchmap->source1);
+#           draw_non_matches(\%options, \@source2_non_matches, $matchmap->source2);
+# Function: Draw the matches and the surrounding content
+# Returns : A string that contains a
+# Args    : two chunk indexes
+
+# =cut
+
+sub draw_non_match
 {
   my $options = shift;
-  my $non_matches_ref = shift;
-  my @non_matches = @{$non_matches_ref};
   my $source = shift;
+  my $non_match_range = shift;
   my $screen_width = $options->{term_width} - 2;
 
-  for my $non_match (@non_matches) {
-    my $start = $non_match->{start};
-    my $end = $non_match->{end};
+  my $start = $non_match_range->start();
+  my $end = $non_match_range->end();
 
-    print "non match in ", $source->name, " ", $start, "..", $end, "\n";
-    my @match_chunks = _get_match_chunks($options, $start, $end, $source);
+  print "  ", $start+1, "..", $end+1, ":\n";
+  my @match_chunks = _get_match_chunks($options, $start, $end, $source);
 
-    for my $match_chunk (@match_chunks) {
-      $match_chunk = substr $match_chunk, 0, $screen_width;
-      printf "  $match_chunk\n";
-    }
+  for my $match_chunk (@match_chunks) {
+    $match_chunk = substr $match_chunk, 0, $screen_width;
+    printf "    $match_chunk\n";
   }
 }
 
@@ -207,5 +240,24 @@ sub _draw_range_and_context
 
   return $ret;
 }
+
+=head1 AUTHOR
+
+Kim Rutherford <kmr+same@xenu.org.uk>
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2005,2006 Kim Rutherford.  All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=head1 DISCLAIMER
+
+This module is provided "as is" without warranty of any kind. It
+may redistributed under the same conditions as Perl itself.
+
+=cut
+
 
 1;

@@ -18,19 +18,6 @@ another.  The "chunks" could potentially be paragraphs or sentences.
 See below.  Methods private to this module are prefixed by an
 underscore.
 
-=head1 AUTHOR
-
-Kim Rutherford <kmr+same@xenu.org.uk>
-
-=head1 COPYRIGHT
-
-Copyright (C) 2005, 2006 Kim Rutherford. All Rights Reserved.
-
-=head1 DISCLAIMER
-
-This module is provided "as is" without warranty of any kind. It
-may redistributed under the same conditions as Perl itself.
-
 =cut
 
 package Text::Same::Match;
@@ -38,6 +25,9 @@ package Text::Same::Match;
 use warnings;
 use strict;
 use Carp;
+
+use vars qw($VERSION);
+$VERSION = '0.01';
 
 =head2 new
 
@@ -260,5 +250,23 @@ sub as_string
 
   return $self->min1 . ".." . $self->max1 . "==" . $self->min2 . ".." . $self->max2;
 }
+
+=head1 AUTHOR
+
+Kim Rutherford <kmr+same@xenu.org.uk>
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2005,2006 Kim Rutherford.  All rights reserved.
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
+=head1 DISCLAIMER
+
+This module is provided "as is" without warranty of any kind. It
+may redistributed under the same conditions as Perl itself.
+
+=cut
 
 1;

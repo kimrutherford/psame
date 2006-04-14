@@ -4,9 +4,25 @@ Text::Same::MatchMap
 
 =head1 DESCRIPTION
 
+Objects of this class are returned by Text::Same::compare() and hold the
+results of comparison in a convenient form.
 
 =head1 SYNOPSIS
 
+ use Text::Same;
+ use Text::Same::TextUI;
+
+ my $matchmap = compare(\%options, $file1, $file2);
+
+ if ($options{show_matches}) {
+   my @matches = $matchmap->matches;
+
+   for my $match (@matches) {
+     if (!defined $options{min_score} or $match->score >= $options{min_score}) {
+       print draw_match(\%options, $match);
+     }
+   }
+ }
 
 =head1 METHODS
 
@@ -25,6 +41,23 @@ use vars qw($VERSION);
 $VERSION = '0.01';
 
 use Text::Same::Range;
+
+=head2 new
+
+ Title   : new
+ Usage   : $matchmap = new Text::Same::MatchMap(options=>$options,
+                                                source1=>$source1,
+                                                source2=>$source2,
+                                                seen_pairs=>\%seen_pairs);
+ Function: Creates a new MatchMap object for a comparison
+ Returns : A Text::Same::MatchMap object
+ Args    : options - the options used by Text::Same::compare();
+           source1 - a ChunkedSource for the first source
+           source2 - a ChunkedSource for the second source
+           seen_pairs - a hash from ChunkPair to Match object, used during
+                        comparison to record which pairs of chunks have been
+                        assigned to a Match
+=cut
 
 sub new
 {
@@ -56,11 +89,28 @@ sub new
   return $self;
 }
 
+=head2 source1
+
+ Title   : source1
+ Usage   : $source = $matchmap->source1();
+ Function: returns the source1 argument to new()
+
+=cut
+
 sub source1
 {
   my $self = shift;
   return $self->{source1};
 }
+
+
+=head2 source2
+
+ Title   : source2
+ Usage   : $source = $matchmap->source2();
+ Function: returns the source2 argument to new()
+
+=cut
 
 sub source2
 {
@@ -134,11 +184,30 @@ sub _get_non_matches
    return \@non_matches;
 }
 
+
+=head2 matches
+
+ Title   : matches
+ Usage   : my @matches = $matches->matches();
+ Function: return the Match object from the seen_pairs argument to new()
+
+=cut
+
 sub matches
 {
   my $self = shift;
   return @{$self->{matches}};
 }
+
+
+=head2 source1_non_matches
+
+ Title   : source1_non_matches
+ Usage   : my @ranges = $matchmap->source1_non_matches();
+ Function: return the ranges of chunks/lines from source1 that didn't match
+           any lines from source2
+
+=cut
 
 sub source1_non_matches
 {
@@ -148,6 +217,15 @@ sub source1_non_matches
   }
   return @{$self->{source1_non_matches}};
 }
+
+=head2 source2_non_matches
+
+ Title   : source2_non_matches
+ Usage   : my @ranges = $matchmap->source2_non_matches();
+ Function: return the ranges of chunks/lines from source2 that didn't match
+           any lines from source1
+
+=cut
 
 sub source2_non_matches
 {

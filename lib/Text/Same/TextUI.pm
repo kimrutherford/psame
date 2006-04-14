@@ -4,8 +4,17 @@ Text::Same::TextUI
 
 =head1 DESCRIPTION
 
+functions for outputting the results of a comparison made with Text::Same::compare();
 
 =head1 SYNOPSIS
+
+Usage   : use Text::Same::TextUI;
+          ...
+          my $matchmap = compare(\%options, $file1, $file2);
+          my @source1_non_matches = $matchmap->source1_non_matches;
+          my @source2_non_matches = $matchmap->source2_non_matches;
+          draw_non_matches(\%options, \@source1_non_matches, $matchmap->source1);
+          draw_non_matches(\%options, \@source2_non_matches, $matchmap->source2);
 
 
 =head1 METHODS
@@ -30,21 +39,20 @@ $VERSION = '0.01';
 
 use Text::Same::ChunkedSource;
 
-# =head2 draw_non_matches
+=head2 draw_non_match
 
-# Title   : draw_non_matches
-# Usage   : use Text::Same::TextUI;
-#           ...
-#           my $matchmap = compare(\%options, $file1, $file2);
-#           my @source1_non_matches = $matchmap->source1_non_matches;
-#           my @source2_non_matches = $matchmap->source2_non_matches;
-#           draw_non_matches(\%options, \@source1_non_matches, $matchmap->source1);
-#           draw_non_matches(\%options, \@source2_non_matches, $matchmap->source2);
-# Function: Draw the matches and the surrounding content
-# Returns : A string that contains a
-# Args    : two chunk indexes
+ Title   : draw_non_match
+ Usage   : draw_non_match(\%options, $source, $non_match);
+ Function: return a string suitable to output that is a representation of
+           a non matching region (range of chunk indexes) in a particular
+           source
+ Args    : %options - settings to use
+           $source - the ChunkedSource that this non-match came from (for 
+                     looking up the actual chunks/lines for the range of
+                     indexes)
+           $non_match - a Range object representing the non-matching chunks
 
-# =cut
+=cut
 
 sub draw_non_match
 {
@@ -56,14 +64,25 @@ sub draw_non_match
   my $start = $non_match_range->start();
   my $end = $non_match_range->end();
 
-  print "  ", $start+1, "..", $end+1, ":\n";
+  my $ret = "  " . ($start+1) . ".." . ($end+1) . ":\n";
   my @match_chunks = _get_match_chunks($options, $start, $end, $source);
 
   for my $match_chunk (@match_chunks) {
     $match_chunk = substr $match_chunk, 0, $screen_width;
-    printf "    $match_chunk\n";
+    $ret .= "    $match_chunk\n";
   }
 }
+
+=head2 draw_match
+
+ Title   : draw_match
+ Usage   : draw_match(\%options, $match);
+ Function: return a string suitable to output that is a representation of
+           a match between two sources
+ Args    : %options - settings to use
+           $non_match - a Match object representing the matching chunks
+
+=cut
 
 sub draw_match
 {

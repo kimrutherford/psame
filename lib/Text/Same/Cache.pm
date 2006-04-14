@@ -4,8 +4,13 @@ Text::Same::Cache
 
 =head1 DESCRIPTION
 
+A (planned) cache of ChunkedSource objects.  For now there is just one method:
+get(), for return a ChunkedSource object for a particular file.
 
 =head1 SYNOPSIS
+
+my $cache = new Text::Same::Cache();
+my $chunked_source = $cache->get($file);
 
 =head1 METHODS
 
@@ -25,12 +30,29 @@ $VERSION = '0.01';
 
 use Text::Same::ChunkedSource;
 
+=head2 new
+
+ Title   : new
+ Usage   : $cache = new Text::Same::Cache();
+ Function: return a new, empty cache
+
+=cut
+
 sub new
 {
   my $self  = shift;
   my $class = ref($self) || $self;
   return bless {}, $class;
 }
+
+=head2 get
+
+ Title   : get
+ Usage   : my $chunked_source = $cache->get($file);
+ Function: return a ChunkedSource object for the given file, possibly getting
+           the ChunkedSource details from a cache
+
+=cut
 
 sub get
 {

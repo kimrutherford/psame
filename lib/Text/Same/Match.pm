@@ -196,12 +196,6 @@ sub max2
   return $_[0]->{max2};
 }
 
-
-sub ranges
-{
-  return ($_[0]->{min1}, $_[0]->{max1}, $_[0]->{min2}, $_[0]->{max2});
-}
-
 =head2 pairs
 
 Title   : pairs

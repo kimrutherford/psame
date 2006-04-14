@@ -45,14 +45,17 @@ sub _process_hits
       $this_chunked_source, $other_chunked_source) = @_;
 
   for my $other_chunk_indx (@$matching_chunk_indexes_ref) {
-    my $chunk_pair = new Text::Same::ChunkPair($this_chunk_indx, $other_chunk_indx);
-    my $pair_id = $chunk_pair->packed_representation;
+    my $chunk_pair = new Text::Same::ChunkPair($this_chunk_indx, 
+                                               $other_chunk_indx);
+    my $pair_id = $chunk_pair->packed_pair();
 
     if (!exists $seen_pairs_ref->{$pair_id}) {
       my $this_prev_chunk_indx =
-        $this_chunked_source->get_previous_chunk_indx($options, $this_chunk_indx);
+        $this_chunked_source->get_previous_chunk_indx($options,
+                                                      $this_chunk_indx);
       my $other_prev_chunk_indx =
-        $other_chunked_source->get_previous_chunk_indx($options, $other_chunk_indx);
+        $other_chunked_source->get_previous_chunk_indx($options, 
+                                                       $other_chunk_indx);
 
       if (defined $this_prev_chunk_indx && defined $other_prev_chunk_indx) {
         my $this_prev_chunk_text =
@@ -66,9 +69,9 @@ sub _process_hits
 
         if ($this_prev_hash eq $other_prev_hash) {
           my $prev_pair_id =
-            Text::Same::ChunkPair::make_packed_representation($this_prev_chunk_indx,
-                                                              $other_prev_chunk_indx);
-          my $prev_match =  $seen_pairs_ref->{$prev_pair_id};
+            Text::Same::ChunkPair::make_packed_pair($this_prev_chunk_indx,
+                                                    $other_prev_chunk_indx);
+          my $prev_match = $seen_pairs_ref->{$prev_pair_id};
 
           if (defined $prev_match) {
             $prev_match->add($chunk_pair);
@@ -115,8 +118,8 @@ sub _find_matches($$$)
         or
            $results = $chunk->compare($options, \@array1, \@array2)
            @all_matches = $results->all_matches;
- Function: return a MatchMap object holding matches between the two given
-           files or arrays of strings
+ Function: return a MatchMap object holding matches and non-matches between the
+           two given files or arrays of strings
 
 =cut
 

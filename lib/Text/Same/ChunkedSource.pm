@@ -58,9 +58,9 @@ sub new
 
 =head2 name
 
-Title   : name
-Usage   : my $name = $source->name();
-Function: return the name of this source - generally the filename
+ Title   : name
+ Usage   : my $name = $source->name();
+ Function: return the name of this source - generally the filename
 
 =cut
 
@@ -108,10 +108,19 @@ sub get_all_chunks
   return @{$self->{all_chunks}};
 }
 
+=head2 get_chunk_by_indx
+
+ Title   : get_chunk_by_indx
+ Usage   : $chunk = $source->get_chunk_by_indx($indx);
+ Function: return the chunk/line at the given index in this source
+
+=cut
+
 sub get_chunk_by_indx
 {
   my $self = shift;
   my $chunk_indx = shift;
+
   return $self->{all_chunks}[$chunk_indx];
 }
 
@@ -214,6 +223,7 @@ sub _maybe_make_filtered_maps
             ignore_case=> (0 or 1)    -- ignore case when comparing
             ignore_blanks=> (0 or 1)  -- ignore blank lines when comparing
             ignore_space=> (0 or 1)   -- ignore whitespace in chunks
+
 =cut
 
 sub get_filtered_chunk_indexes
@@ -238,6 +248,7 @@ sub get_filtered_chunk_indexes
             ignore_case=> (0 or 1)    -- ignore case when comparing
             ignore_blanks=> (0 or 1)  -- ignore blank lines when comparing
             ignore_space=> (0 or 1)   -- ignore whitespace in chunks
+
 =cut
 
 sub get_matching_chunk_indexes
@@ -264,15 +275,15 @@ sub get_matching_chunk_indexes
            $options.  For example if $options->{ignore_blanks} is true the
            filtered chunks will contain no blank lines.
 
-eg. input lines:
+ eg. input lines:
 
    some text on line 0
    <blank line>
    <blank line>
    some text on line 3
 
-the real index of "some text on line 3" is 3, but the filtered index is 1 if
-ignore_blanks is set because the filtered lines are:
+ the real index of "some text on line 3" is 3, but the filtered index is 1 if
+ ignore_blanks is set because the filtered lines are:
    some text on line 0
    some text on line 3
 

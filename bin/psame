@@ -86,8 +86,7 @@ show matches and non-matches
 =item B<-a>
 
 apply (a)ll useful options - sets the following options:
-
-   B<-B> B<-b> B<-i> B<-s> 2 B<-S> 3 <-N>
+B<-b> B<-i> B<-B> B<-s> 2 B<-N> B<-S> 3
 
 =back
 
@@ -102,7 +101,8 @@ too slow and memory intensive for larger files.
 
 =head1 TO DO
 
-Output formatting should maybe be done with Perl6::Form
+Output formatting should maybe be done with Perl6::Form and needs to be more 
+readable
 
 =head1 AUTHOR
 
@@ -217,10 +217,10 @@ if ($options{show_non_matches}) {
 
   print "non matches in ", $matchmap->source1()->name, ":\n";
   for my $non_match (@source1_non_matches) {
-    draw_non_match(\%options, $matchmap->source1, $non_match);
+    print draw_non_match(\%options, $matchmap->source1, $non_match);
   }
   print "non matches in ", $matchmap->source2()->name, ":\n";
   for my $non_match (@source2_non_matches) {
-    draw_non_match(\%options, $matchmap->source2, $non_match);
+    print draw_non_match(\%options, $matchmap->source2, $non_match);
   }
 }

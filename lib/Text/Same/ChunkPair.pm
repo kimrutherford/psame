@@ -4,7 +4,7 @@ Text::Same::ChunkPair
 
 =head1 DESCRIPTION
 
-A class representing a pair of chunk indexes (ie. line numbers)
+A class representing a pair of chunk indexes (generally line numbers)
 
 =head1 SYNOPSIS
 
@@ -49,7 +49,7 @@ sub new
     croak "undefined value passed to ChunkPair->new\n";
   }
 
-  my $packed_pair = make_packed_representation(@_);
+  my $packed_pair = make_packed_pair(@_);
 
   return bless \$packed_pair, $class;
 }
@@ -57,8 +57,8 @@ sub new
 =head2 chunk_index1
 
  Title   : chunk_index1
- Usage   : my $chunk_index = $match->chunk_index1;
- Function: return the first Chunk_index of this ChunkPair
+ Usage   : my $chunk_index = $pair->chunk_index1;
+ Function: return the first chunk_index of this ChunkPair
  Args    : none
 
 =cut
@@ -72,7 +72,7 @@ sub chunk_index1
 =head2 chunk_index2
 
  Title   : chunk_index2
- Usage   : my $chunk_index = $match->chunk_index2;
+ Usage   : my $chunk_index = $pair->chunk_index2;
  Function: return the second chunk_index of this ChunkPair
  Args    : none
 
@@ -84,13 +84,33 @@ sub chunk_index2
   return (unpack 'II', $$self)[1];
 }
 
-sub packed_representation
+=head2 packed_pair
+
+ Title   : packed_pair
+ Usage   : my $packed_pair = $chunk_pair->packed_pair();
+ Function: return a packed representation of this ChunkPair by pack()ing
+           index1 and index2 into a string
+ Args    : none
+
+=cut
+
+sub packed_pair
 {
   my $self = shift;
   return $$self;
 }
 
-sub make_packed_representation
+=head2 make_packed_pair
+
+ Title   : make_packed_pair
+ Usage   : my $packed_pair = $chunk_pair->make_packed_pair($index1, $index2);
+ Function: return a packed representation of the pair of indexes by pack()ing
+           them into a string
+ Args    : two indexes
+
+=cut
+
+sub make_packed_pair
 {
   return pack 'II', @_;
 }

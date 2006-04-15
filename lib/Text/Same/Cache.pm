@@ -63,11 +63,11 @@ sub get
 
   local $/ = "\n";
   if ($filename =~ /(rcs|svn|co).*\|/) {
-    open F, "$filename" or carp "$!: $filename";
+    open F, "$filename" or die "$!: $filename\n";
 
     @lines = map {chomp; $_} (<F>);
   } else {
-    open F, "<$filename" or carp "$!: $filename"; 
+    open F, "<$filename" or die "$!: $filename\n";
     @lines = map {chomp; $_} (<F>);
   }
   return new Text::Same::ChunkedSource(name=>$filename, chunks=>\@lines);

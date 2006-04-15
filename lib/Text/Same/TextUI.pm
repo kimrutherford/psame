@@ -71,6 +71,8 @@ sub draw_non_match
     $match_chunk = substr $match_chunk, 0, $screen_width;
     $ret .= "    $match_chunk\n";
   }
+
+  return $ret;
 }
 
 =head2 draw_match
@@ -80,7 +82,7 @@ sub draw_non_match
  Function: return a string suitable to output that is a representation of
            a match between two sources
  Args    : %options - settings to use
-           $non_match - a Match object representing the matching chunks
+           $match - a Match object representing the matching chunks
 
 =cut
 

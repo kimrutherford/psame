@@ -79,12 +79,11 @@ sub add
 
 =head2 source1
 
-Title   : source1
-Usage   : my $chunked_source = $match->source1;
-Function: get the ChunkedSource for the first chunks of the ChunkPairs - should
-be the same for every ChunkPair.
-Returns : a ChunkedSource reference
-Args    : none
+ Title   : source1
+ Usage   : my $chunked_source = $match->source1;
+ Function: get the ChunkedSource for the source 1
+ Returns : a ChunkedSource reference
+ Args    : none
 
 =cut
 
@@ -96,12 +95,11 @@ sub source1
 
 =head2 source2
 
-Title   : source2
-Usage   : my $chunked_source = $match->source2;
-Function: get the ChunkedSource for the second chunks of the ChunkPairs -
-          should be the same for every ChunkPair.
-Returns : a ChunkedSource reference
-Args    : none
+ Title   : source2
+ Usage   : my $chunked_source = $match->source2;
+ Function: get the ChunkedSource for the source 2
+ Returns : a ChunkedSource reference
+ Args    : none
 
 =cut
 
@@ -198,11 +196,11 @@ sub max2
 
 =head2 pairs
 
-Title   : pairs
-Usage   : my @pairs = $match->pairs;
-Function: return all the ChunkPair objects that have been add()ed to this Match
-Returns : a List of ChunkPair objects
-Args    : none
+ Title   : pairs
+ Usage   : my @pairs = $match->pairs;
+ Function: return all the ChunkPair objects that have been add()ed to this Match
+ Returns : a List of ChunkPair objects
+ Args    : none
 
 =cut
 

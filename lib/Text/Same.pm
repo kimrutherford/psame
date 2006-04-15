@@ -2,19 +2,19 @@ package Text::Same;
 
 =head1 NAME
 
-Text::Same - Look for similarities between files
+Text::Same - Look for similarities between files or arrays
 
 =head1 SYNOPSIS
 
     use Text::Same;
 
-    my @matches = compare "file1.txt", "file2.txt", { ignore-whitespace => 1 };
-    my @matches = compare \@records1,  \@records2;
+    my @matches = compare "file1.txt", "file2.txt", { ignore_whitespace => 1 };
+    my @matches = compare \@records1,  \@records2,  { ignore_simple => 3 };
 
 =head1 DESCRIPTION
 
-C<compare()> compares two files or arrays of strings and returns an array of
-Text::Same::Match objects.
+C<compare()> compares two files or arrays of strings and returns a MatchMap 
+object holding the results.
 
 =cut
 

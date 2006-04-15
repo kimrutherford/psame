@@ -56,22 +56,22 @@ my @test_data = (
                  {
                   dir=>"test5",
                   match_count=>3,
-                  unmatched1=>0,
-                  unmatched2=>3,
+                  unmatched1=>1,
+                  unmatched2=>1,
                   ignore_space=>1,
                  },
                  {
                   dir=>"test6",
                   match_count=>3,
-                  unmatched1=>0,
-                  unmatched2=>3,
+                  unmatched1=>1,
+                  unmatched2=>1,
                   ignore_blanks=>1,
                  },
                  {
                   dir=>"test7",
                   match_count=>3,
-                  unmatched1=>0,
-                  unmatched2=>3,
+                  unmatched1=>2,
+                  unmatched2=>1,
                   ignore_case=>1,
                  },
                  {
@@ -79,6 +79,12 @@ my @test_data = (
                   match_count=>5,
                   unmatched1=>1,
                   unmatched2=>1,
+                 },
+                 {
+                  dir=>"test9",
+                  match_count=>5,
+                  unmatched1=>2,
+                  unmatched2=>2,
                  },
                 );
 
@@ -92,6 +98,8 @@ for $test_data (@test_data) {
   my $matchmap = compare $options, $file1, $file2;
 
   ok(scalar($matchmap->matches) == $test_data->{match_count});
+  ok(scalar($matchmap->source1_non_matches) == $test_data->{unmatched1});
+  ok(scalar($matchmap->source2_non_matches) == $test_data->{unmatched2});
 
   $count++;
 }

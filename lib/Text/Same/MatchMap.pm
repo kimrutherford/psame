@@ -57,18 +57,18 @@ use Text::Same::Range;
            seen_pairs - a hash from ChunkPair to Match object, used during
                         comparison to record which pairs of chunks have been
                         assigned to a Match
+
 =cut
 
 sub new
 {
   my $arg  = shift;
   my $class = ref($arg) || $arg;
+  my %args = @_;
 
-  my $self = {@_};
+  my $self = {options=>$args{options}, source1=>$args{source1}, source2=>$args{source2}};
 
-  my %seen_pairs = %{$self->{seen_pairs}};
-
-  my @matches = values %seen_pairs;
+  my @matches = values %{$args{seen_pairs}};
   my %uniq_matches = ();
 
   for my $match (@matches) {
@@ -171,7 +171,7 @@ sub _get_non_matches
    for (my $i = 1; $i < $max_chunk; $i++) {
      if (defined $current_min) {
        if (exists $indx_to_matches{$i}) {
-         push @non_matches, new Text::Same::Range($current_min, $i-1);
+         push @non_matches, new Text::Same::Range($current_min, $i - 1);
          $current_min = undef;
        }
      } else {
@@ -179,6 +179,10 @@ sub _get_non_matches
          $current_min = $i;
        }
      }
+   }
+
+   if (defined $current_min) {
+     push @non_matches, new Text::Same::Range($current_min, $max_chunk - 1);
    }
 
    return \@non_matches;
@@ -189,7 +193,7 @@ sub _get_non_matches
 
  Title   : matches
  Usage   : my @matches = $matches->matches();
- Function: return the Match object from the seen_pairs argument to new()
+ Function: return the Match objects from the seen_pairs argument to new()
 
 =cut
 

@@ -30,6 +30,8 @@ $VERSION = '0.01';
 
 use Digest::MD5 qw(md5);
 
+use Text::Same::Util;
+
 =head2 new
 
  Title   : new
@@ -68,30 +70,6 @@ sub name
 {
   my $self = shift;
   return $self->{name};
-}
-
-=head2 hash
-
- Title   : hash
- Usage   : my $hash_value = hash($options, $text)
- Function: return an integer hash/checksum for the given text
-
-=cut
-
-sub hash
-{
-  my $options = shift;
-  my $text = shift;
-
-  if ($options->{ignore_case}) {
-    $text = lc $text;
-  }
-  if ($options->{ignore_space}) {
-    $text =~ s/^\s+//;
-    $text =~ s/\s+/ /g;
-    $text =~ s/\s+$//;
-  }
-  return md5($text);
 }
 
 =head2 get_all_chunks
@@ -152,32 +130,18 @@ sub _make_chunk_maps
 
   for (my $i = 0; $i < scalar(@{$self->{all_chunks}}); $i++) {
     my $chunk = $self->{all_chunks}[$i];
-    if (!($options->{ignore_blanks} && $chunk =~ m!^\s*$!) &&
-        !_is_simple($options, $chunk)) {
+    if (!is_ignorable($options, $chunk)) {
       push @filtered_chunk_indexes, $i;
       $real_index_to_filtered_index{$i} = $filtered_chunk_count;
       $filtered_index_to_real_index{$filtered_chunk_count} = $i;
 
-      push @{$filtered_hash{hash($options, $chunk)}}, $i;
+      push @{$filtered_hash{Text::Same::Util::hash($options, $chunk)}}, $i;
       $filtered_chunk_count++;
     }
   }
 
   return \@filtered_chunk_indexes, \%filtered_hash,
          \%real_index_to_filtered_index, \%filtered_index_to_real_index;
-}
-
-sub _is_simple($$)
-{
-  my ($options, $text) = @_;
-  if ($options->{ignore_simple}) {
-    my $simple_len = $options->{ignore_simple};
-    $text =~ s/\s+//g;
-    if (length $text <= $simple_len) {
-      return 1;
-    }
-  }
-  return 0;
 }
 
 
@@ -348,6 +312,32 @@ sub get_previous_chunk_indx
   }
 
   return ($self->get_filtered_chunk_indexes($options))->[$prev_filtered_indx];
+}
+
+=head2 get_next_chunk_indx
+
+ Title   : get_next_chunk_indx
+ Usage   : $next_chunk_indx =
+               $source->get_next_chunk_indx($options, $chunk_indx);
+ Function: return the next chunk index from the list of filtered chunk
+           indexes (for the given $options).  See discussion above.
+
+=cut
+
+sub get_next_chunk_indx
+{
+  my $self = shift;
+  my $options = shift;
+  my $chunk_indx = shift;
+
+  my $next_filtered_indx =
+    $self->get_filtered_indx_from_real($options, $chunk_indx) + 1;
+
+  if ($next_filtered_indx >= $self->get_all_chunks_count()) {
+    return undef;
+  }
+
+  return ($self->get_filtered_chunk_indexes($options))->[$next_filtered_indx];
 }
 
 =head1 AUTHOR

@@ -68,19 +68,12 @@ sub new
 
   my $self = {options=>$args{options}, source1=>$args{source1}, source2=>$args{source2}};
 
-  my @matches = values %{$args{seen_pairs}};
-  my %uniq_matches = ();
-
-  for my $match (@matches) {
-    $uniq_matches{$match} = $match;
-  }
-
   my @sorted_matches =
     sort {
       $a->{min1} <=> $b->{min1}
         ||
       $a->{min2} <=> $b->{min2};
-    } values %uniq_matches;
+    } @{$args{matches}};
 
   $self->{matches} = \@sorted_matches;
 

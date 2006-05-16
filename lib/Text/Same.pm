@@ -32,12 +32,13 @@ use Exporter;
 @ISA = qw( Exporter );
 @EXPORT = qw( compare );
 
+$VERSION = '0.01';
+
 use Text::Same::Match;
 use Text::Same::ChunkPair;
 use Text::Same::MatchMap;
 use Text::Same::Cache;
-
-$VERSION = '0.01';
+use Text::Same::Util;
 
 sub _process_hits
 {
@@ -111,6 +112,40 @@ sub _find_matches($$$)
   return \%seen_pairs;
 }
 
+sub _extend_matches
+{
+  my ($options, $matches, $source1, $source2) = @_;
+
+  for my $match (@$matches) {
+    my ($prev, $next) = undef;
+    
+    $prev = $source1->get_previous_chunk_indx($options, $match->min1());
+    if (defined $prev) {
+      $match->set_min1($prev + 1);
+    } else {
+      $match->set_min1(0);
+    }
+    $prev = $source2->get_previous_chunk_indx($options, $match->min2());
+    if (defined $prev) {
+      $match->set_min2($prev + 1);
+    } else {
+      $match->set_min2(0);
+    }
+    $next = $source1->get_next_chunk_indx($options, $match->max1());
+    if (defined $next) {
+      $match->set_max1($next - 1);
+    } else {
+      $match->set_max1($source1->get_all_chunks_count() - 1);
+    }
+    $next = $source2->get_next_chunk_indx($options, $match->max2());
+    if (defined $next) {
+      $match->set_max2($next - 1);
+    } else {
+      $match->set_max2($source2->get_all_chunks_count() - 1);
+    }
+  }
+}
+
 =head2 compare
 
  Title   : compare
@@ -149,11 +184,21 @@ sub compare
 
   my $seen_pairs_ref = _find_matches $options, $source1, $source2;
 
+  my @matches = values %{$seen_pairs_ref};
+  my %uniq_matches = ();
+
+  for my $match (@matches) {
+    $uniq_matches{$match} = $match;
+  }
+
+  my @unique_matches = values %uniq_matches;
+
+  _extend_matches($options, \@unique_matches, $source1, $source2);
+
   return new Text::Same::MatchMap(options=>$options, source1=>$source1,
                                   source2=>$source2,
-                                  seen_pairs=>$seen_pairs_ref);
+                                  matches=>\@unique_matches);
 }
-
 
 =head1 AUTHOR
 

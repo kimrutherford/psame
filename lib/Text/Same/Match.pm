@@ -194,6 +194,46 @@ sub max2
   return $_[0]->{max2};
 }
 
+sub set_min1
+{
+  my $self = shift;
+  my $new_val = shift;
+  if ($new_val > $self->{max1}) {
+    die "min greater than max\n";
+  }
+  $self->{min1} = $new_val;
+}
+
+sub set_min2
+{
+  my $self = shift;
+  my $new_val = shift;
+  if ($new_val > $self->{max2}) {
+    die "min greater than max\n";
+  }
+  $self->{min2} = $new_val;
+}
+
+sub set_max1
+{
+  my $self = shift;
+  my $new_val = shift;
+  if ($new_val < $self->{min1}) {
+    die "min greater than max\n";
+  }
+  $self->{max1} = $new_val;
+}
+
+sub set_max2
+{
+  my $self = shift;
+  my $new_val = shift;
+  if ($new_val < $self->{min2}) {
+    die "min greater than max\n";
+  }
+  $self->{max2} = $new_val;
+}
+
 =head2 pairs
 
  Title   : pairs

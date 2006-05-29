@@ -28,8 +28,25 @@ RCS.
 By default, the output with be a side-by-side view of matching regions with a
 few lines of context.
 
-=head1 DESCRIPTION
+=head1 MOTIVATION
 
+B<psame> allows the user to find lines in one piece of text (generally from a
+file) that match some lines in a second piece of text.
+
+=head1 USE CASES
+
+=head2 Code comparision
+
+The B<diff(1)> command is excellent for finding differences between files, but
+sometimes similarity is more interesting.  A common case is when a chunk of
+code is moved to another part of the same file.  In that case comparing the
+old and new versions of the file with B<diff> will tell you that there has
+been a deletion of text and an insertion.  B<psame>, on the other hand, will
+tell you where moved code is in the new version.  In simple cases, the output
+from B<diff> is clear enough but comparision with B<psame> can help in the
+cases where there have been many edits.
+
+=head1 DESCRIPTION
 
 =head2 Options
 
@@ -47,9 +64,9 @@ ignore case
 
 ignore blank lines
 
-=item B<-s>
+=item B<-s> <num>
 
-<num> ignore simple/short lines (ie. less than <num> chars>
+ignore simple/short lines (ie. less than <num> chars>
 
 =item B<-y>
 
@@ -67,21 +84,25 @@ show non-matches instead of matches
 
 show matches and non-matches
 
-=item B<-x>
+=item B<-x> <wid>
 
-<wid> set terminal width in columns (normally guessed)
+set terminal width in columns (normally guessed)
 
-=item B<-r>
+=item B<-r> <ver>
 
-<ver> compare with <version> from SVN, CVS or RCS
+compare with <version> from SVN, CVS or RCS
 
-=item B<-S>
+=item B<-S> <num>
 
-<num> only show matches with score higher than <num>
+only show matches with score higher than <num> (see the SCORE section below)
 
-=item B<-C>
+=item B<-M> <score>
 
-<num> number of lines of context
+return only matches higher than <score>
+
+=item B<-C> <num>
+
+number of lines of context
 
 =item B<-a>
 
@@ -89,6 +110,95 @@ apply (a)ll useful options - sets the following options:
 B<-b> B<-i> B<-B> B<-s> 2 B<-N> B<-S> 3
 
 =back
+
+=head1 MATCHES
+
+A "match" is some number of consective lines in one file (or file version)
+that are similar to some number of consective lines in a second file (or
+file version).  In the simplest case with no options specified, the lines
+in each file must be identical.  As an example, consider these two pieces
+of text (with added line numbers):
+
+=head2 B<text_1>
+
+ 1. The parrot sketch -
+ 2.  'E's kicked the bucket, 'e's
+ 3.
+ 3.  shuffled off 'is mortal coil, run
+ 4.  down the curtain and joined the
+ 5.  bleedin' choir invisibile!
+ 6.  THIS IS AN EX-PARROT!
+
+
+=head2 B<text_2>
+
+ 1. 'E's kicked the bucket, 'e's
+ 2. shuffled off 'is mortal coil, run
+ 3. down the curtain and joined the
+ 4. bleedin' choir invisibile!
+ 5. 
+ 6. This is an ex-parrot!
+
+=back
+
+Using the default settings, B<psame> will report this:
+
+ match 2..5==1..4
+   The parrot sketch -                                                    
+    'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's     
+    shuffled off 'is mortal coil, run =  shuffled off 'is mortal coil, run
+    down the curtain and joined the   =  down the curtain and joined the  
+    bleedin' choir invisibile!        =  bleedin' choir invisibile!       
+    THIS IS AN EX-PARROT!                                                 
+                                         This is an ex-parrot!            
+
+which indicates that there are four lines from B<text_1> (ie. lines 2 to 5)
+that match four lines from text_2 (ie. 1 to 4).  Note that psame is, by
+default, case sensitive so line 6 of B<text_1> doesn't match line 6 of
+B<text_2> in this case.
+
+Adding the B<-i> option will make B<psame> ignore case, hence find the last
+line of each file to be equal:
+
+ match 2..5==1..4
+   The parrot sketch -                                                    
+    'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's     
+    shuffled off 'is mortal coil, run =  shuffled off 'is mortal coil, run
+    down the curtain and joined the   =  down the curtain and joined the  
+    bleedin' choir invisibile!        =  bleedin' choir invisibile!       
+    THIS IS AN EX-PARROT!                                                 
+                                         This is an ex-parrot!            
+ match 6..6==6..6
+    shuffled off 'is mortal coil, run    down the curtain and joined the  
+    down the curtain and joined the      bleedin' choir invisibile!       
+    bleedin' choir invisibile!                                            
+    THIS IS AN EX-PARROT!             =  This is an ex-parrot!            
+
+
+=head1 NON-MATCHES
+
+The B<-n> flag will report lines in each file that don't match any lines in
+the other file.  For example, running B<psame -n> on the files above, with no
+other options gives:
+
+ non matches in text_1:
+   1..1:
+     The parrot sketch -
+   6..6:
+      THIS IS AN EX-PARROT!
+ non matches in text_2:
+   5..6:
+
+      This is an ex-parrot!
+
+In this case B<diff(1)> will tell us the same thing but is other situations we
+only want to know about lines in file A that don't appear anywhere in file B.
+An example might be when modifying the order of sections in a manuscript - we
+would like to check that all sections are still present, even if in a
+different place.
+
+=head1 SCORE
+
 
 =head1 BUGS
 
@@ -101,8 +211,8 @@ too slow and memory intensive for larger files.
 
 =head1 TO DO
 
-Output formatting should maybe be done with Perl6::Form and needs to be more 
-readable
+Output formatting should be done with Perl6::Form or some such and the output
+needs to be more readable.  Suggestions are very welcome.
 
 =head1 AUTHOR
 
@@ -169,12 +279,16 @@ options:
    -b           ignore changes in whitespace
    -i           ignore case
    -B           ignore blank lines
+   -s <num>     ignore simple/short lines (ie. less than <num> chars>
    -y           side-by-side match view (default)
    -V           vertical match view
+   -n           show non-matches instead of matches
+   -N           show both matches and non-matches
    -x           terminal width in columns
-   -n           show non-matches instead
    -r <version> compare with <version> from SVN, CVS or RCS
+   -S <num>     only show matches with score higher than <num>
    -M <score>   return only matches higher than <score>
+   -C <num>     the number of line of context to show around each match
    -a           apply (a)ll useful options - sets the following options:
                 -b -i -B -s 2 -N -S 3
 
@@ -182,6 +296,8 @@ The first usage compares the two files.
 The second usage compare the given file with the latest version from 
 Subversion, CVS or RCS.
 The third usage compares again a given version.
+
+See the manual page for more details.
 USAGE
 }
 

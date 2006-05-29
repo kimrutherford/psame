@@ -66,7 +66,7 @@ ignore blank lines
 
 =item B<-s> <num>
 
-ignore simple/short lines (ie. less than <num> chars>
+ignore simple/short lines (ie. those with less than <num> chars)
 
 =item B<-y>
 
@@ -95,10 +95,6 @@ compare with <version> from SVN, CVS or RCS
 =item B<-S> <num>
 
 only show matches with score higher than <num> (see the SCORE section below)
-
-=item B<-M> <score>
-
-return only matches higher than <score>
 
 =item B<-C> <num>
 
@@ -139,8 +135,6 @@ of text (with added line numbers):
  5. 
  6. This is an ex-parrot!
 
-=back
-
 Using the default settings, B<psame> will report this:
 
  match 2..5==1..4
@@ -174,6 +168,8 @@ line of each file to be equal:
     bleedin' choir invisibile!                                            
     THIS IS AN EX-PARROT!             =  This is an ex-parrot!            
 
+In this case B<psame> is reporting two distinct matches - one four lines long
+and the other one line long.
 
 =head1 NON-MATCHES
 
@@ -199,6 +195,9 @@ different place.
 
 =head1 SCORE
 
+The score of a match is currently the total number of lines this match covers
+in both files.  The B<-S> option for filtering by score is useful for
+filtering out small matches so that the larger changes can be seen.
 
 =head1 BUGS
 
@@ -287,7 +286,6 @@ options:
    -x           terminal width in columns
    -r <version> compare with <version> from SVN, CVS or RCS
    -S <num>     only show matches with score higher than <num>
-   -M <score>   return only matches higher than <score>
    -C <num>     the number of line of context to show around each match
    -a           apply (a)ll useful options - sets the following options:
                 -b -i -B -s 2 -N -S 3

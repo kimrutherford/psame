@@ -194,6 +194,15 @@ sub max2
   return $_[0]->{max2};
 }
 
+=head2 set_min1
+
+ Title   : set_min1
+ Usage   : $match->set_min1;
+ Function: Set the minimum index of the chunks in the first (ie. left) of
+           the ChunkedSources held in this Match
+
+=cut
+
 sub set_min1
 {
   my $self = shift;
@@ -203,6 +212,15 @@ sub set_min1
   }
   $self->{min1} = $new_val;
 }
+
+=head2 set_min2
+
+ Title   : set_min2
+ Usage   : $match->set_min2;
+ Function: Set the minimum index of the chunks in the second (ie. right) of
+           the ChunkedSources held in this Match
+
+=cut
 
 sub set_min2
 {
@@ -214,6 +232,15 @@ sub set_min2
   $self->{min2} = $new_val;
 }
 
+=head2 set_max1
+
+ Title   : set_max1
+ Usage   : $match->set_max1;
+ Function: Set the maximum index of the chunks in the first (ie. left) of
+           the ChunkedSources held in this Match
+
+=cut
+
 sub set_max1
 {
   my $self = shift;
@@ -223,6 +250,15 @@ sub set_max1
   }
   $self->{max1} = $new_val;
 }
+
+=head2 set_max2
+
+ Title   : set_max2
+ Usage   : $match->set_max2;
+ Function: Set the maximum index of the chunks in the second (ie. right) of
+           the ChunkedSources held in this Match
+
+=cut
 
 sub set_max2
 {

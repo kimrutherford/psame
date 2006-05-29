@@ -12,27 +12,31 @@ To install this module, run the following commands:
 
 SUPPORT AND DOCUMENTATION
 
-After installing, you can find documentation for this module with the perldoc command.
+After installing, you can find documentation for this package with the perldoc command.
 
-    perldoc Text::Same
+    perldoc psame
+
+or on UNIX-like systems:
+
+    man psame
 
 You can also look for information at:
 
     Search CPAN
-        http://search.cpan.org/dist/File-Same
+        http://search.cpan.org/dist/Text-Same
 
     CPAN Request Tracker:
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=File-Same
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Text-Same
 
     AnnoCPAN, annotated CPAN documentation:
-        http://annocpan.org/dist/File-Same
+        http://annocpan.org/dist/Text-Same
 
     CPAN Ratings:
-        http://cpanratings.perl.org/d/File-Same
+        http://cpanratings.perl.org/d/Text-Same
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2005 Kim Rutherford
+Copyright (C) 2006 Kim Rutherford
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.

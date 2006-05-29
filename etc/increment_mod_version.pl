@@ -1,5 +1,8 @@
 #!/usr/bin/perl -w
 
+# increment the version number in all the files on the command line (and do it
+# recursively for directories on the command line)
+
 use strict;
 
 use File::Find;

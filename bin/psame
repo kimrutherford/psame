@@ -30,8 +30,10 @@ few lines of context.
 
 =head1 MOTIVATION
 
-B<psame> allows the user to find lines in one piece of text (generally from a
-file) that match some lines in a second piece of text.
+B<psame> was written to allow the author an easy way to compare two
+pieces of text.  In particular to find lines in one piece of text
+(generally from a file) that match some lines in a second piece of
+text.
 
 =head1 USE CASES
 

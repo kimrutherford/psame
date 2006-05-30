@@ -119,7 +119,6 @@ of text (with added line numbers):
 
  1. The parrot sketch -
  2.  'E's kicked the bucket, 'e's
- 3.
  3.  shuffled off 'is mortal coil, run
  4.  down the curtain and joined the
  5.  bleedin' choir invisibile!
@@ -132,19 +131,19 @@ of text (with added line numbers):
  2. shuffled off 'is mortal coil, run
  3. down the curtain and joined the
  4. bleedin' choir invisibile!
- 5. 
+ 5.
  6. This is an ex-parrot!
 
 Using the default settings, B<psame> will report this:
 
  match 2..5==1..4
-   The parrot sketch -                                                    
-    'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's     
+   The parrot sketch -
+    'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's
     shuffled off 'is mortal coil, run =  shuffled off 'is mortal coil, run
-    down the curtain and joined the   =  down the curtain and joined the  
-    bleedin' choir invisibile!        =  bleedin' choir invisibile!       
-    THIS IS AN EX-PARROT!                                                 
-                                         This is an ex-parrot!            
+    down the curtain and joined the   =  down the curtain and joined the
+    bleedin' choir invisibile!        =  bleedin' choir invisibile!
+    THIS IS AN EX-PARROT!
+                                         This is an ex-parrot!
 
 which indicates that there are four lines from B<text_1> (ie. lines 2 to 5)
 that match four lines from text_2 (ie. 1 to 4).  Note that psame is, by
@@ -155,18 +154,18 @@ Adding the B<-i> option will make B<psame> ignore case, hence find the last
 line of each file to be equal:
 
  match 2..5==1..4
-   The parrot sketch -                                                    
-    'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's     
+   The parrot sketch -
+    'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's
     shuffled off 'is mortal coil, run =  shuffled off 'is mortal coil, run
-    down the curtain and joined the   =  down the curtain and joined the  
-    bleedin' choir invisibile!        =  bleedin' choir invisibile!       
-    THIS IS AN EX-PARROT!                                                 
-                                         This is an ex-parrot!            
+    down the curtain and joined the   =  down the curtain and joined the
+    bleedin' choir invisibile!        =  bleedin' choir invisibile!
+    THIS IS AN EX-PARROT!
+                                         This is an ex-parrot!
  match 6..6==6..6
-    shuffled off 'is mortal coil, run    down the curtain and joined the  
-    down the curtain and joined the      bleedin' choir invisibile!       
-    bleedin' choir invisibile!                                            
-    THIS IS AN EX-PARROT!             =  This is an ex-parrot!            
+    shuffled off 'is mortal coil, run    down the curtain and joined the
+    down the curtain and joined the      bleedin' choir invisibile!
+    bleedin' choir invisibile!
+    THIS IS AN EX-PARROT!             =  This is an ex-parrot!
 
 In this case B<psame> is reporting two distinct matches - one four lines long
 and the other one line long.
@@ -291,7 +290,7 @@ options:
                 -b -i -B -s 2 -N -S 3
 
 The first usage compares the two files.
-The second usage compare the given file with the latest version from 
+The second usage compare the given file with the latest version from
 Subversion, CVS or RCS.
 The third usage compares again a given version.
 

@@ -37,7 +37,7 @@ text.
 
 =head1 USE CASES
 
-=head2 Code comparision
+=head2 Code comparison
 
 The B<diff(1)> command is excellent for finding differences between files, but
 sometimes similarity is more interesting.  A common case is when a chunk of
@@ -45,7 +45,7 @@ code is moved to another part of the same file.  In that case comparing the
 old and new versions of the file with B<diff> will tell you that there has
 been a deletion of text and an insertion.  B<psame>, on the other hand, will
 tell you where moved code is in the new version.  In simple cases, the output
-from B<diff> is clear enough but comparision with B<psame> can help in the
+from B<diff> is clear enough but comparison with B<psame> can help in the
 cases where there have been many edits.
 
 =head1 DESCRIPTION
@@ -56,11 +56,11 @@ cases where there have been many edits.
 
 =item B<-b>
 
-ignore changes in whitespace
+ignore changes in whitespace with a line
 
 =item B<-i>
 
-ignore case
+ignore case when comparing lines
 
 =item B<-B>
 
@@ -104,48 +104,49 @@ number of lines of context
 
 =item B<-a>
 
-apply (a)ll useful options - sets the following options:
+apply (a)ll useful options - sets the options to ignore case, spaces, blank
+lines, 1 character lines and short matches.  Equivalent to the these options:
 B<-b> B<-i> B<-B> B<-s> 2 B<-N> B<-S> 3
 
 =back
 
 =head1 MATCHES
 
-A "match" is some number of consective lines in one file (or file version)
-that are similar to some number of consective lines in a second file (or
+A "match" is some number of consecutive lines in one file (or file version)
+that are similar to some number of consecutive lines in a second file (or
 file version).  In the simplest case with no options specified, the lines
 in each file must be identical.  As an example, consider these two pieces
 of text (with added line numbers):
 
 =head2 B<text_1>
 
- 1. The parrot sketch -
- 2.  'E's kicked the bucket, 'e's
- 3.  shuffled off 'is mortal coil, run
- 4.  down the curtain and joined the
- 5.  bleedin' choir invisibile!
- 6.  THIS IS AN EX-PARROT!
+ 1.  The parrot sketch -
+ 2.   'E's kicked the bucket, 'e's
+ 3.   shuffled off 'is mortal coil, run
+ 4.   down the curtain and joined the
+ 5.   bleedin' choir invisible!
+ 6.   THIS IS AN EX-PARROT!
 
 
 =head2 B<text_2>
 
- 1. 'E's kicked the bucket, 'e's
- 2. shuffled off 'is mortal coil, run
- 3. down the curtain and joined the
- 4. bleedin' choir invisibile!
+ 1.  'E's kicked the bucket, 'e's
+ 2.  shuffled off 'is mortal coil, run
+ 3.  down the curtain and joined the
+ 4.  bleedin' choir invisible!
  5.
- 6. This is an ex-parrot!
+ 6.  This is an ex-parrot!
 
 Using the default settings, B<psame> will report this:
 
  match 2..5==1..4
-   The parrot sketch -
-    'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's
-    shuffled off 'is mortal coil, run =  shuffled off 'is mortal coil, run
-    down the curtain and joined the   =  down the curtain and joined the
-    bleedin' choir invisibile!        =  bleedin' choir invisibile!
-    THIS IS AN EX-PARROT!
-                                         This is an ex-parrot!
+  The parrot sketch -
+   'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's
+   shuffled off 'is mortal coil, run =  shuffled off 'is mortal coil, run
+   down the curtain and joined the   =  down the curtain and joined the
+   bleedin' choir invisible!         =  bleedin' choir invisible!
+   THIS IS AN EX-PARROT!
+                                        This is an ex-parrot!
 
 which indicates that there are four lines from B<text_1> (ie. lines 2 to 5)
 that match four lines from text_2 (ie. 1 to 4).  Note that psame is, by
@@ -160,13 +161,13 @@ line of each file to be equal:
     'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's
     shuffled off 'is mortal coil, run =  shuffled off 'is mortal coil, run
     down the curtain and joined the   =  down the curtain and joined the
-    bleedin' choir invisibile!        =  bleedin' choir invisibile!
+    bleedin' choir invisible!         =  bleedin' choir invisible!
     THIS IS AN EX-PARROT!
                                          This is an ex-parrot!
  match 6..6==6..6
     shuffled off 'is mortal coil, run    down the curtain and joined the
-    down the curtain and joined the      bleedin' choir invisibile!
-    bleedin' choir invisibile!
+    down the curtain and joined the      bleedin' choir invisible!
+    bleedin' choir invisible!
     THIS IS AN EX-PARROT!             =  This is an ex-parrot!
 
 In this case B<psame> is reporting two distinct matches - one four lines long

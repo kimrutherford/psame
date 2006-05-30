@@ -8,16 +8,15 @@ Text::Same - Look for similarities between files or arrays
 
     use Text::Same;
 
-    my @matches = compare "file1.txt", "file2.txt", { ignore_whitespace => 1 };
-    my @matches = compare \@records1,  \@records2,  { ignore_simple => 3 };
+    my $matchmap = compare "file_1", "file_2", { ignore_whitespace => 1 };
+    my $matchmap = compare \@records1,  \@records2,  { ignore_simple => 3 };
 
 =head1 DESCRIPTION
 
-C<compare()> compares two files or arrays of strings and returns a MatchMap 
+C<compare()> compares two files or arrays of strings and returns a MatchMap
 object holding the results.
 
 =cut
-
 
 =head1 FUNCTIONS
 
@@ -46,7 +45,7 @@ sub _process_hits
       $this_chunked_source, $other_chunked_source) = @_;
 
   for my $other_chunk_indx (@$matching_chunk_indexes_ref) {
-    my $chunk_pair = new Text::Same::ChunkPair($this_chunk_indx, 
+    my $chunk_pair = new Text::Same::ChunkPair($this_chunk_indx,
                                                $other_chunk_indx);
     my $pair_id = $chunk_pair->packed_pair();
 
@@ -55,7 +54,7 @@ sub _process_hits
         $this_chunked_source->get_previous_chunk_indx($options,
                                                       $this_chunk_indx);
       my $other_prev_chunk_indx =
-        $other_chunked_source->get_previous_chunk_indx($options, 
+        $other_chunked_source->get_previous_chunk_indx($options,
                                                        $other_chunk_indx);
 
       if (defined $this_prev_chunk_indx && defined $other_prev_chunk_indx) {
@@ -118,7 +117,7 @@ sub _extend_matches
 
   for my $match (@$matches) {
     my ($prev, $next) = undef;
-    
+
     $prev = $source1->get_previous_chunk_indx($options, $match->min1());
     if (defined $prev) {
       $match->set_min1($prev + 1);
@@ -149,10 +148,11 @@ sub _extend_matches
 =head2 compare
 
  Title   : compare
- Usage   : $results = $chunk->compare($options, $file1, $file2)
+ Usage   : $matchmap = compare($options, $file1, $file2)
         or
-           $results = $chunk->compare($options, \@array1, \@array2)
-           @all_matches = $results->all_matches;
+           $matchmap = compare($options, \@array1, \@array2)
+        then:
+           my @all_matches = $matchmap->all_matches;
  Function: return a MatchMap object holding matches and non-matches between the
            two given files or arrays of strings
 

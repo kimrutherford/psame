@@ -55,8 +55,8 @@ use Text::Same::Range;
            source1 - a ChunkedSource for the first source
            source2 - a ChunkedSource for the second source
            seen_pairs - a hash from ChunkPair to Match object, used during
-                        comparison to record which pairs of chunks have been
-                        assigned to a Match
+                        comparison to record which pairs of chunks (ie.
+                        pairs of lines) have been assigned to a Match
 
 =cut
 

@@ -5,7 +5,7 @@ Text::Same::Cache
 =head1 DESCRIPTION
 
 A (planned) cache of ChunkedSource objects.  For now there is just one method:
-get(), for return a ChunkedSource object for a particular file.
+get(), which returns a ChunkedSource object for a particular file.
 
 =head1 SYNOPSIS
 

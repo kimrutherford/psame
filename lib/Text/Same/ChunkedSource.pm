@@ -1,6 +1,6 @@
 =head1 NAME
 
-Text::Same::Match
+Text::Same::ChunkedSource
 
 =head1 DESCRIPTION
 

@@ -18,6 +18,8 @@ etc/increment_mod_version.pl
 t/00-load.t
 t/match.t
 t/chunked_source.t
+t/pod.t
+t/pod-coverage.t
 t/data/test1/file1
 t/data/test1/file2
 t/data/test2/file1

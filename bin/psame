@@ -189,7 +189,7 @@ other options gives:
 
       This is an ex-parrot!
 
-In this case B<diff(1)> will tell us the same thing but is other situations we
+In this case B<diff(1)> will tell us the same thing but in other situations we
 only want to know about lines in file A that don't appear anywhere in file B.
 An example might be when modifying the order of sections in a manuscript - we
 would like to check that all sections are still present, even if in a

@@ -6,5 +6,5 @@ Revision history for Text-Same
 
 0.02
 
-  - documentation fixes, no functionality changes
-
+  - documentation fixes
+  - the opions set with the -a flag can now be overridden

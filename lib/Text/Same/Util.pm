@@ -25,7 +25,7 @@ use Exporter;
 @ISA = qw( Exporter );
 @EXPORT = qw( hash is_ignorable );
 
-$VERSION = '0.01';
+$VERSION = '0.02';
 
 use Digest::MD5 qw(md5);
 

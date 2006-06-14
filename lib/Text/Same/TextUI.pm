@@ -67,9 +67,13 @@ sub draw_non_match
   my $ret = "  " . ($start+1) . ".." . ($end+1) . ":\n";
   my @match_chunks = _get_match_chunks($options, $start, $end, $source);
 
-  for my $match_chunk (@match_chunks) {
-    $match_chunk = substr $match_chunk, 0, $screen_width;
-    $ret .= "    $match_chunk\n";
+  my $padding = "    ";
+
+  for my $match_chunk (@match_chunks) {    
+    $match_chunk = substr $match_chunk, 0, $screen_width - length $padding;
+    $ret .= $padding;
+    $ret .= $match_chunk;
+    $ret .= "\n";
   }
 
   return $ret;

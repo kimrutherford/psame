@@ -8,3 +8,5 @@ Revision history for Text-Same
 
   - documentation fixes
   - the opions set with the -a flag can now be overridden
+  - the -n option now produces output less than the terminal width
+

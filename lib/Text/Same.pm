@@ -11,6 +11,10 @@ Text::Same - Look for similarities between files or arrays
     my $matchmap = compare "file_1", "file_2", { ignore_whitespace => 1 };
     my $matchmap = compare \@records1,  \@records2,  { ignore_simple => 3 };
 
+  or use the "psame" command:
+
+    psame -a file_1 file_2 | more
+
 =head1 DESCRIPTION
 
 C<compare()> compares two files or arrays of strings and returns a MatchMap
@@ -200,6 +204,10 @@ sub compare
                                   matches=>\@unique_matches);
 }
 
+=head1 SEE ALSO
+
+B<psame(1)>
+
 =head1 AUTHOR
 
 Kim Rutherford <kmr+same@xenu.org.uk>
@@ -214,4 +222,3 @@ under the same terms as Perl itself.
 =cut
 
 1;
-

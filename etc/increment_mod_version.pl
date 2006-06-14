@@ -14,7 +14,11 @@ sub executable
   my $line = <F>;
   close F;
   if (defined $line) {
-    return $line =~ m{\#!.*perl};
+    if ($line =~ m{\#!.*perl}) {
+      return 1;
+    } else {
+      return 0;
+    }
   } else {
     return 0;
   }
@@ -25,7 +29,8 @@ sub process
   my $file = $_;
 
   if (-f $file) {
-    if ($file =~ /\.pm$/ || executable($file) && ! $file =~ /~$/) {
+    if ($file =~ /\.pm$/ ||
+        executable($file) && $file !~ /~$|\.svn/) {
       rename $file, $file . ".old~";
       open IN, '<', $file . ".old~" or die;
       open OUT, '>', $file or die;

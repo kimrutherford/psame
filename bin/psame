@@ -246,16 +246,32 @@ if (exists $command_line_options{a}) {
   $options{context} = 3;
 }
 
-$options{ignore_case} = $command_line_options{i};
-$options{ignore_blanks} = $command_line_options{B};
-$options{ignore_space} = $command_line_options{b};
-$options{ignore_simple} = $command_line_options{s};
-$options{side_by_side} = 0 if defined $command_line_options{V};
-$options{side_by_side} = 1 if defined $command_line_options{y};
-$options{term_width} = $command_line_options{x};
-$options{min_score} = $command_line_options{S};
-$options{revision} = $command_line_options{r};
-$options{context} = $command_line_options{C};
+if (exists $command_line_options{i}) {
+  $options{ignore_case} = 1;
+}
+if (exists $command_line_options{B}) {
+  $options{ignore_blanks} = 1;
+}
+if (exists $command_line_options{b}) {
+  $options{ignore_space} = 1;
+}
+if (exists $command_line_options{s}) {
+  $options{ignore_simple} = $command_line_options{s};
+}
+$options{side_by_side} = 0 if exists $command_line_options{V};
+$options{side_by_side} = 1 if exists $command_line_options{y};
+if (exists $command_line_options{x}) {
+  $options{term_width} = 1;
+}
+if (exists $command_line_options{S}) {
+  $options{min_score} = 1;
+}
+if (exists $command_line_options{r}) {
+  $options{revision} = 1;
+}
+if (exists $command_line_options{C}) {
+  $options{context} = 1;
+}
 
 if (exists $command_line_options{n}) {
   $options{show_non_matches} = 1;

@@ -56,19 +56,19 @@ cases where there have been many edits.
 
 =item B<-b>
 
-ignore changes in whitespace with a line
+don't ignore changes in whitespace with a line
 
 =item B<-i>
 
-ignore case when comparing lines
+don't ignore case when comparing lines
 
 =item B<-B>
 
-ignore blank lines
+don't ignore blank lines
 
 =item B<-s> <num>
 
-ignore simple/short lines (ie. those with less than <num> chars)
+ignore simple/short lines (ie. those with less than <num> chars) - default 3
 
 =item B<-y>
 
@@ -97,10 +97,11 @@ compare with <version> from SVN, CVS or RCS
 =item B<-S> <num>
 
 only show matches with score higher than <num> (see the SCORE section below)
+default 5
 
 =item B<-C> <num>
 
-number of lines of context
+number of lines of context - default 3
 
 =item B<-a>
 
@@ -234,26 +235,20 @@ my %options = (side_by_side => 1);
 
 $options{show_matches} = 1;
 
-if (exists $command_line_options{a}) {
-  $options{ignore_case} = 1;
-  $options{ignore_blanks} = 1;
-  $options{ignore_space} = 1;
-  $options{ignore_simple} = 2;
-  $options{side_by_side} = 1;
-  $options{min_score} = 3;
-  $options{show_matches} = 1;
-  $options{show_non_matches} = 1;
-  $options{context} = 3;
-}
+$options{ignore_case} = 1;
+$options{ignore_blanks} = 1;
+$options{ignore_space} = 1;
+$options{ignore_simple} = 3;
+$options{min_score} = 5;
 
 if (exists $command_line_options{i}) {
-  $options{ignore_case} = 1;
+  $options{ignore_case} = 0;
 }
 if (exists $command_line_options{B}) {
-  $options{ignore_blanks} = 1;
+  $options{ignore_blanks} = 0;
 }
 if (exists $command_line_options{b}) {
-  $options{ignore_space} = 1;
+  $options{ignore_space} = 9;
 }
 if (exists $command_line_options{s}) {
   $options{ignore_simple} = $command_line_options{s};
@@ -264,13 +259,13 @@ if (exists $command_line_options{x}) {
   $options{term_width} = 1;
 }
 if (exists $command_line_options{S}) {
-  $options{min_score} = 1;
+  $options{min_score} = $command_line_options{S};
 }
 if (exists $command_line_options{r}) {
-  $options{revision} = 1;
+  $options{revision} = $command_line_options{r};
 }
 if (exists $command_line_options{C}) {
-  $options{context} = 1;
+  $options{context} = $command_line_options{C};
 }
 
 if (exists $command_line_options{n}) {
@@ -293,20 +288,19 @@ or
  usage: $0 [options] [-r version] file
 
 options:
-   -b           ignore changes in whitespace
-   -i           ignore case
-   -B           ignore blank lines
-   -s <num>     ignore simple/short lines (ie. less than <num> chars>
+   -b           don't ignore changes in whitespace
+   -i           don't ignore case
+   -B           don't ignore blank lines
+   -s <num>     ignore simple/short lines (ie. less than <num> chars) default 3
    -y           side-by-side match view (default)
    -V           vertical match view
    -n           show non-matches instead of matches
    -N           show both matches and non-matches
    -x           terminal width in columns
    -r <version> compare with <version> from SVN, CVS or RCS
-   -S <num>     only show matches with score higher than <num>
+   -S <num>     only show matches with score higher than <num> - default 5
    -C <num>     the number of line of context to show around each match
-   -a           apply (a)ll useful options - sets the following options:
-                -b -i -B -s 2 -N -S 3
+                (default 3)
 
 The first usage compares the two files.
 The second usage compare the given file with the latest version from

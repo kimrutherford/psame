@@ -1,6 +1,6 @@
 #!perl -T
 
-use Test::More tests => 33;
+use Test::More tests => 36;
 
 use Text::Same;
 
@@ -92,6 +92,14 @@ my @test_data = (
                    match_count=>1,
                    unmatched1=>0,
                    unmatched2=>2,
+                  },
+                  {
+                   dir=>"test11",
+                   match_count=>1,
+                   unmatched1=>1,
+                   unmatched2=>0,
+                   ignore_blanks=>1,
+                   ignore_case=>1,
                   },
                 );
 

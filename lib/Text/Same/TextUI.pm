@@ -38,6 +38,7 @@ use Carp;
 $VERSION = '0.02';
 
 use Text::Same::ChunkedSource;
+use Text::Same::Util;
 
 =head2 draw_non_match
 
@@ -128,7 +129,7 @@ sub _draw_match_side_by_side
   my $context_format_str =
     "  %-${half_width}.${half_width}s   %-${half_width}.${half_width}s\n";
   my $match_format_str =
-    "  %-${half_width}.${half_width}s = %-${half_width}.${half_width}s\n";
+    "  %-${half_width}.${half_width}s %s %-${half_width}.${half_width}s\n";
   my $i;
   for ($i = 0; $i < $max_start_context_len; $i++) {
     if (defined $start_context1[$i] || defined $start_context2[$i]) {
@@ -146,10 +147,47 @@ sub _draw_match_side_by_side
     scalar(@match_chunks1) > scalar(@match_chunks2) ?
       scalar(@match_chunks1) : scalar(@match_chunks2);
 
+  my $next_indicator = undef;
+
   for ($i = 0; $i < $max_match_len; $i++) {
+    my $left_chunk = $match_chunks1[$i];
+    my $left_ignorable = 
+      !defined $left_chunk || is_ignorable($options, $left_chunk);
+    my $right_chunk = $match_chunks2[$i];
+    my $right_ignorable = 
+      !defined $right_chunk || is_ignorable($options, $right_chunk);
+
+    my $indicator;
+    if ($left_ignorable && $right_ignorable) {
+      if (defined $next_indicator) {
+        $indicator = $next_indicator;
+      } else {
+        $indicator = "-";
+      }
+    } else {
+      if (!$left_ignorable && !$right_ignorable) {
+        $indicator = "=";
+      } else {
+        if ($left_ignorable) {
+          # insert a blank on the right and try again
+          splice(@match_chunks2, $i, 0, "");
+          $next_indicator = "<";
+          redo;
+        } else {
+          # insert a blank on the left and try again
+          splice(@match_chunks1, $i, 0, "");
+          $next_indicator = ">";
+          redo;
+        }
+      }
+    }
+
     $ret .= sprintf $match_format_str,
-      (defined $match_chunks1[$i] ? $match_chunks1[$i] : ""),
-      (defined $match_chunks2[$i] ? $match_chunks2[$i] : "");
+      (defined $left_chunk ? $left_chunk : ""),
+      $indicator,
+      (defined $right_chunk ? $right_chunk : "");
+
+    $next_indicator = undef;
   }
 
   my @end_context1 = _get_end_context($options, $max1, $match->source1);

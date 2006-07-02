@@ -239,93 +239,66 @@ Kim Rutherford <kmr+same@xenu.org.uk>
 use Text::Same;
 use Text::Same::TextUI qw( draw_match draw_non_match );
 
-use Getopt::Std;
+use Getopt::Long;
+use Pod::Usage;
 
-my %command_line_options = ();
-getopts('aviBbVynNC:s:x:S:r:', \%command_line_options);
+my $option_parser = new Getopt::Long::Parser;
+$option_parser->configure("gnu_getopt");
 
 # set defaults
-my %options = (side_by_side => 1);
+my %options = (
+               side_by_side => 1,
+               show_matches => 1,
+               ignore_case => 1,
+               ignore_blanks => 1,
+               ignore_space => 1,
+              );
 
-$options{show_matches} = 1;
+my $need_help = 0;
+my $mode = "default";
 
-$options{ignore_case} = 1;
-$options{ignore_blanks} = 1;
-$options{ignore_space} = 1;
+my %opt_config = (
+                  'revision=s@' => \$options{revisions},
+                  'show-matches' => \$options{show_matches},
+                  'show-non-matches|N' => \$options{show_non_matches},
+                  'show-only-non-matches|n' => sub {
+                        $options{show_non_matches} = 1;
+                        $options{show_matches} = 0;
+                    },
+                  'dont-ignore-case|i' => sub {$options{ignore_case} = 0;},
+                  'dont-ignore-spaces|b' => sub {$options{ignore_space} = 0;},
+                  'dont-ignore-bank-lines|B' => sub {$options{ignore_blanks} = 0;},
+                  'terminal-width|x' => \$options{term_width},
+                  'minimum-score|S' => \$options{min_score},
+                  'context|C=i' => \$options{context},
+                  'minimum-line-length|M=i' => \$options{ignore_simple},
+                  'side-by-side|y' => \$options{side_by_side},
+                  'vertical|V' => sub {$options{side_by_side} = 0;},
+                  'mode|m' => \$mode,
+                  'help|h|?' => \$need_help,
+                 );
 
-if (exists $command_line_options{i}) {
-  $options{ignore_case} = 0;
-}
-if (exists $command_line_options{B}) {
-  $options{ignore_blanks} = 0;
-}
-if (exists $command_line_options{b}) {
-  $options{ignore_space} = 0;
-}
-if (exists $command_line_options{s}) {
-  $options{ignore_simple} = $command_line_options{s};
-}
-$options{side_by_side} = 0 if exists $command_line_options{V};
-$options{side_by_side} = 1 if exists $command_line_options{y};
-if (exists $command_line_options{x}) {
-  $options{term_width} = 1;
-}
-if (exists $command_line_options{S}) {
-  $options{min_score} = $command_line_options{S};
-}
-if (exists $command_line_options{r}) {
-  $options{revision} = $command_line_options{r};
-}
-if (exists $command_line_options{C}) {
-  $options{context} = $command_line_options{C};
-}
-
-if (exists $command_line_options{n}) {
-  $options{show_non_matches} = 1;
-  $options{show_matches} = 0;
+if (!$option_parser->getoptions(%opt_config)) {
+  usage(2);
 }
 
-if (exists $command_line_options{N}) {
-  $options{show_matches} = 1;
-  $options{show_non_matches} = 1;
+if ($need_help) {
+  usage(1);
 }
 
 sub usage
 {
-  die <<"USAGE";
- usage: $0 [options] file1 file2
-or
- usage: $0 [options] file
-or
- usage: $0 [options] [-r version] file
-
-options:
-   -b           don't ignore changes in whitespace
-   -i           don't ignore case
-   -B           don't ignore blank lines
-   -s <num>     ignore simple/short lines (ie. less than <num> chars)
-                default: no line is considered to be simple
-   -y           side-by-side match view (default)
-   -V           vertical match view
-   -n           show non-matches instead of matches
-   -N           show both matches and non-matches
-   -x           terminal width in columns
-   -r <version> compare with <version> from SVN, CVS or RCS
-   -S <num>     only show matches with score higher than <num> - default 5
-   -C <num>     the number of line of context to show around each match
-                (default 3)
-
-The first usage compares the two files.
-The second usage compare the given file with the latest version from
-Subversion, CVS or RCS.
-The third usage compares again a given version.
-
-See the manual page for more details.
-USAGE
+  my $exit_val = shift;
+  my $message = shift;
+  if (defined $message) {
+    pod2usage(-verbose => 1, -exitval => $exit_val, -message => $message);
+  } else {
+    pod2usage(-verbose => 1, -exitval => $exit_val);
+  }
 }
 
 if (@ARGV < 1 or @ARGV > 2) {
-  usage;
+  usage(2, "error: one or two arguments needed\n");
 }
 
 if (@ARGV == 1) {

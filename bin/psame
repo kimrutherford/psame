@@ -17,15 +17,19 @@ psame - finds similarities between files or versions of files
 
   psame [options] file1 file2
   psame [options] file
-  psame [options] [-r version] file
+  psame [options] -r version file
+  psame [options] -r version_a -r version_b file
 
 The first usage compares the two files.
-The second usage compare the given file with the latest version from
+The second usage compares the latest version from Subversion, CVS or RCS
+against the given file.
+The third usage will compare the given version from Subversion, CVS or
+RCS against the given file.
+The fourth usage will compare the two versions of the given file from
 Subversion, CVS or RCS.
-The third usage will compare against a given version from Subversion, CVS or
-RCS.
 
-By default, the output with be a side-by-side view of matching regions with a
+By default, blank lines, whitespace and case are ignored when comparing.
+The output will be a side-by-side view of matching regions with a
 few lines of context.
 
 =head1 MOTIVATION
@@ -35,7 +39,7 @@ pieces of text.  In particular to find lines in one piece of text
 (generally from a file) that match some lines in a second piece of
 text.
 
-=head1 USE CASES
+=head1 USES OF PSAME
 
 =head2 Code comparison
 
@@ -54,22 +58,27 @@ cases where there have been many edits.
 
 =over 4
 
-=item B<-b>
+=item B<-b>, B<--dont-ignore-spaces>
 
 don't ignore changes in whitespace with a line
 
-=item B<-i>
+=item B<-i>, B<--dont-ignore-case
 
 don't ignore case when comparing lines
 
-=item B<-B>
+=item B<-B>, B<--dont-ignore-bank-lines>
 
 don't ignore blank lines
 
-=item B<-s> <num>
+=item B<-M <num>>, B<--minimum-line-length <num>> 
 
 ignore simple/short lines (ie. those with less than <num> chars) -
 default: no lines are considered too simple
+
+=item B<-S <num>>, B<--minimum-score <num>>
+
+only show matches with score higher than <num> (see the SCORE section
+below)
 
 =item B<-y>
 
@@ -87,13 +96,13 @@ show non-matches instead of matches
 
 show matches and non-matches
 
-=item B<-x> <wid>
+=item B<-x E<lt>widE<gt>>
 
 set terminal width in columns (normally guessed)
 
-=item B<-r> <ver>
+=item B<-r E<lt>verE<gt>>, B<-revision E<lt>verE<gt>, B<-r E<lt>verE<gt> -r E<lt>verE<gt>>
 
-compare with <version> from SVN, CVS or RCS
+compare with version(s) from SVN, CVS or RCS
 
 =item B<-S> <num>
 
@@ -125,12 +134,12 @@ of text (with added line numbers):
 
 =head2 B<text_2>
 
- 1.  'E's kicked the bucket, 'e's
- 2.  shuffled off 'is mortal coil, run
- 3.  down the curtain and joined the
- 4.  bleedin' choir invisible!
+ 1.   'E's kicked the bucket, 'e's
+ 2.   shuffled off 'is mortal coil, run
+ 3.   down the curtain and joined the
+ 4.   bleedin' choir invisible!
  5.
- 6.  This is an ex-parrot!
+ 6.   This is an ex-parrot!
 
 =head2 Default settings
 
@@ -258,7 +267,7 @@ my $need_help = 0;
 my $mode = "default";
 
 my %opt_config = (
-                  'revision=s@' => \$options{revisions},
+                  'revision|r=s@' => \$options{revisions},
                   'show-matches' => \$options{show_matches},
                   'show-non-matches|N' => \$options{show_non_matches},
                   'show-only-non-matches|n' => sub {
@@ -269,7 +278,7 @@ my %opt_config = (
                   'dont-ignore-spaces|b' => sub {$options{ignore_space} = 0;},
                   'dont-ignore-bank-lines|B' => sub {$options{ignore_blanks} = 0;},
                   'terminal-width|x' => \$options{term_width},
-                  'minimum-score|S' => \$options{min_score},
+                  'minimum-score|S=i' => \$options{min_score},
                   'context|C=i' => \$options{context},
                   'minimum-line-length|M=i' => \$options{ignore_simple},
                   'side-by-side|y' => \$options{side_by_side},
@@ -301,25 +310,41 @@ if (@ARGV < 1 or @ARGV > 2) {
   usage(2, "error: one or two arguments needed\n");
 }
 
-if (@ARGV == 1) {
-  my $revision = "";
+my $revision_count = scalar(@{$options{revisions}});
 
-  if (defined $options{revision}) {
-    $revision = "-r $options{revision} ";
+if ($revision_count > 2) {
+  usage(2, "error: a maximum of two revisions can be given");
+}
+
+if (@ARGV == 1) {
+  my $file_name = $ARGV[0];
+  my @revisions = ();
+
+  if (defined $options{revisions}) {
+    @revisions = @{$options{revisions}};
   }
 
-  if (-d ".svn") {
-    push @ARGV, "svn cat $revision$ARGV[0]|";
-  } else {
-    if (-d "CVS") {
-      push @ARGV, "cvs up $revision-p $ARGV[0]|";
+  # we'll push two new arguments
+  @ARGV = ();
+
+  for my $revision (@revisions) {
+    if (-d ".svn") {
+      push @ARGV, "svn cat -r $revision $file_name|";
     } else {
-      if (-e "$ARGV[0],v") {
-        push @ARGV, "co $revision-p $ARGV[0]|";
+      if (-d "CVS") {
+        push @ARGV, "cvs up -r $revision -p $file_name|";
       } else {
-        usage;
+        if (-e "$ARGV[0],v") {
+          push @ARGV, "co -r $revision -p $file_name|";
+        } else {
+          usage;
+        }
       }
     }
+  }
+
+  if (@ARGV == 1) {
+    push @ARGV, $file_name;
   }
 }
 

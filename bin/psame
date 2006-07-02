@@ -78,7 +78,7 @@ default: no lines are considered too simple
 =item B<-S <num>>, B<--minimum-score <num>>
 
 only show matches with score higher than <num> (see the SCORE section
-below)
+below) - default 0
 
 =item B<-y>
 
@@ -103,11 +103,6 @@ set terminal width in columns (normally guessed)
 =item B<-r E<lt>verE<gt>>, B<-revision E<lt>verE<gt>, B<-r E<lt>verE<gt> -r E<lt>verE<gt>>
 
 compare with version(s) from SVN, CVS or RCS
-
-=item B<-S> <num>
-
-only show matches with score higher than <num> (see the SCORE section
-below) - default 5
 
 =item B<-C> <num>
 
@@ -261,6 +256,7 @@ my %options = (
                ignore_case => 1,
                ignore_blanks => 1,
                ignore_space => 1,
+               min_score => 0,
               );
 
 my $need_help = 0;
@@ -310,7 +306,11 @@ if (@ARGV < 1 or @ARGV > 2) {
   usage(2, "error: one or two arguments needed\n");
 }
 
-my $revision_count = scalar(@{$options{revisions}});
+my $revision_count = 0;
+
+if (defined $options{revisions}) {
+  $revision_count = scalar(@{$options{revisions}});
+}
 
 if ($revision_count > 2) {
   usage(2, "error: a maximum of two revisions can be given");

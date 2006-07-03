@@ -4,7 +4,7 @@ Text::Same::Util
 
 =head1 DESCRIPTION
 
-
+Utility methods for Text::Same
 
 =head1 METHODS
 

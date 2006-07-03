@@ -299,7 +299,7 @@ sub pairs
 sub score
 {
   my $self = shift;
-  return $self->{max1} - $self->{min1} + $self->{max2} - $self->{min2} + 2;
+  return $self->{max1} - $self->{min1} + $self->{max2} - $self->{min2};
 }
 
 

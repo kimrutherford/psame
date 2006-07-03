@@ -43,7 +43,7 @@ text.
 
 =head2 Code comparison
 
-The B<diff(1)> command is excellent for finding differences between files, but
+The L<diff(1)> command is excellent for finding differences between files, but
 sometimes similarity is more interesting.  A common case is when a chunk of
 code is moved to another part of the same file.  In that case comparing the
 old and new versions of the file with B<diff> will tell you that there has
@@ -56,13 +56,13 @@ cases where there have been many edits.
 
 =head2 Options
 
-=over 4
+=over 3
 
 =item B<-b>, B<--dont-ignore-spaces>
 
 don't ignore changes in whitespace with a line
 
-=item B<-i>, B<--dont-ignore-case
+=item B<-i>, B<--dont-ignore-case>
 
 don't ignore case when comparing lines
 
@@ -70,43 +70,64 @@ don't ignore case when comparing lines
 
 don't ignore blank lines
 
-=item B<-M <num>>, B<--minimum-line-length <num>> 
+=item B<< -M <num> >>, B<< --minimum-line-length <num> >>
 
 ignore simple/short lines (ie. those with less than <num> chars) -
 default: no lines are considered too simple
 
-=item B<-S <num>>, B<--minimum-score <num>>
+=item B<< -S <num> >>, B<< --minimum-score <num> >>
 
 only show matches with score higher than <num> (see the SCORE section
 below) - default 0
 
-=item B<-y>
+=item B<-y>, B<--side-by-side>
 
 side-by-side match view (default)
 
-=item B<-V>
+=item B<-V>, B<--vertical>
 
 vertical match view
 
-=item B<-n>
+=item B<-n>, B<--show-only-non-matches>
 
 show non-matches instead of matches
 
-=item B<-N>
+=item B<-N>, B<--show-non-matches>
 
 show matches and non-matches
 
-=item B<-x E<lt>widE<gt>>
+=item B<< -x <wid> >>, B<< --width <wid> >>
 
 set terminal width in columns (normally guessed)
 
-=item B<-r E<lt>verE<gt>>, B<-revision E<lt>verE<gt>, B<-r E<lt>verE<gt> -r E<lt>verE<gt>>
+=item B<< -r <ver> >>, B<< --revision <ver> >>,
+B<< -r <ver> -r <ver> >>
 
 compare with version(s) from SVN, CVS or RCS
 
-=item B<-C> <num>
+=item B<< -C <num> >>, B<< --context <num> >>
 
 number of lines of context - default 3
+
+=item B<< -m <mode> >>, B<< --mode <mode> >>
+
+use the <modeE<gt> to choose appropriate settings
+
+=over 3
+
+=item B<text>  (the default)
+
+choose settings suitable for text/documentation
+
+=item B<code>
+
+choose setting for code
+
+=back
+
+=item B<-h>, B<-?>, B<--help>
+
+show a usage message
 
 =back
 
@@ -208,7 +229,7 @@ other options gives:
 
       This is an ex-parrot!
 
-In this case B<diff(1)> will tell us the same thing but in other situations we
+In this case L<diff(1)> will tell us the same thing but in other situations we
 only want to know about lines in file A that don't appear anywhere in file B.
 An example might be when modifying the order of sections in a manuscript - we
 would like to check that all sections are still present, even if in a

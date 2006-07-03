@@ -300,7 +300,7 @@ my %opt_config = (
                   'minimum-line-length|M=i' => \$options{ignore_simple},
                   'side-by-side|y' => \$options{side_by_side},
                   'vertical|V' => sub {$options{side_by_side} = 0;},
-                  'mode|m' => \$mode,
+                  'mode|m=s' => \$mode,
                   'help|h|?' => \$need_help,
                  );
 
@@ -320,6 +320,19 @@ sub usage
     pod2usage(-verbose => 1, -exitval => $exit_val, -message => $message);
   } else {
     pod2usage(-verbose => 1, -exitval => $exit_val);
+  }
+}
+
+if ($mode eq 'default' or $mode eq 'text') {
+  $options{ignore_simple} = 10;
+  $options{min_score} = 4;
+} else {
+  if ($mode eq 'code') {
+    $options{ignore_case} = 0;
+    $options{ignore_simple} = 5;
+    $options{min_score} = 6;
+  } else {
+    usage(2, "error: unkown mode: $mode");
   }
 }
 

@@ -356,6 +356,8 @@ if (@ARGV == 1) {
 
   if (defined $options{revisions}) {
     @revisions = @{$options{revisions}};
+  } else {
+    @revisions = "HEAD";
   }
 
   # we'll push two new arguments

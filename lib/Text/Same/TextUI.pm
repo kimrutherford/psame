@@ -143,19 +143,15 @@ sub _draw_match_side_by_side
                                         $match->source1);
   my @match_chunks2 = _get_match_chunks($options, $min2, $max2,
                                         $match->source2);
-  my $max_match_len =
-    scalar(@match_chunks1) > scalar(@match_chunks2) ?
-      scalar(@match_chunks1) : scalar(@match_chunks2);
-
   my $next_indicator = undef;
 
-  for ($i = 0; $i < $max_match_len; $i++) {
+  for ($i = 0; $i<scalar(@match_chunks1) or $i<scalar(@match_chunks2); $i++) {
     my $left_chunk = $match_chunks1[$i];
     my $left_ignorable = 
-      !defined $left_chunk || is_ignorable($options, $left_chunk);
+      defined $left_chunk && is_ignorable($options, $left_chunk);
     my $right_chunk = $match_chunks2[$i];
     my $right_ignorable = 
-      !defined $right_chunk || is_ignorable($options, $right_chunk);
+      defined $right_chunk && is_ignorable($options, $right_chunk);
 
     my $indicator;
     if ($left_ignorable && $right_ignorable) {
@@ -192,6 +188,7 @@ sub _draw_match_side_by_side
 
   my @end_context1 = _get_end_context($options, $max1, $match->source1);
   my @end_context2 = _get_end_context($options, $max2, $match->source2);
+
   my $max_end_context_len =
     scalar(@end_context1) > scalar(@end_context2) ?
       scalar(@end_context1) : scalar(@end_context2);

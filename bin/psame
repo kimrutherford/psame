@@ -113,6 +113,10 @@ number of lines of context - default 3
 
 use the <modeE<gt> to choose appropriate settings
 
+=item B<-v>
+
+Display version number and exit
+
 =over 3
 
 =item B<text>  (the default)
@@ -281,6 +285,7 @@ my %options = (
               );
 
 my $need_help = 0;
+my $need_version = 0;
 my $mode = "default";
 
 my %opt_config = (
@@ -301,6 +306,7 @@ my %opt_config = (
                   'side-by-side|y' => \$options{side_by_side},
                   'vertical|V' => sub {$options{side_by_side} = 0;},
                   'mode|m=s' => \$mode,
+                  'version|v' => \$need_version,
                   'help|h|?' => \$need_help,
                  );
 
@@ -310,6 +316,11 @@ if (!$option_parser->getoptions(%opt_config)) {
 
 if ($need_help) {
   usage(1);
+}
+
+if ($need_version) {
+  print "psame version $VERSION\n";
+  exit(0);
 }
 
 sub usage

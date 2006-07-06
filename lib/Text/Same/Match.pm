@@ -27,7 +27,7 @@ use strict;
 use Carp;
 
 use vars qw($VERSION);
-$VERSION = '0.02';
+$VERSION = '0.03';
 
 =head2 new
 

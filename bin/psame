@@ -113,21 +113,21 @@ number of lines of context - default 3
 
 use the <modeE<gt> to choose appropriate settings
 
-=item B<-v>
-
-Display version number and exit
-
 =over 3
 
-=item B<text>  (the default)
+=item B<text>
 
-choose settings suitable for text/documentation
+choose settings suitable for text/documentation: -M 10 -S 4
 
 =item B<code>
 
-choose setting for code
+choose setting for code: -i -M 5 -S 6
 
 =back
+
+=item B<-v>, B<--version>
+
+Display version number and exit
 
 =item B<-h>, B<-?>, B<--help>
 
@@ -282,6 +282,7 @@ my %options = (
                ignore_blanks => 1,
                ignore_space => 1,
                min_score => 0,
+               ignore_simple => 0
               );
 
 my $need_help = 0;
@@ -334,16 +335,18 @@ sub usage
   }
 }
 
-if ($mode eq 'default' or $mode eq 'text') {
+if ($mode eq 'text') {
   $options{ignore_simple} = 10;
   $options{min_score} = 4;
 } else {
   if ($mode eq 'code') {
     $options{ignore_case} = 0;
     $options{ignore_simple} = 5;
-    $options{min_score} = 6;
+    $options{min_score} = 0;
   } else {
-    usage(2, "error: unkown mode: $mode");
+    if ($mode ne 'default') {
+      usage(2, "error: unknown mode: $mode");
+    }
   }
 }
 

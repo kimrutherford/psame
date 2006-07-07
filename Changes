@@ -10,3 +10,12 @@ Revision history for Text-Same
   - the opions set with the -a flag can now be overridden
   - the -n option now produces output less than the terminal width
 
+0.03
+
+  - option changes
+      - there are long versions of all options (eg. --revision)
+      - the -r flag can now be used twice to compare two versions of a file
+        under SVN, CVS or RCS control
+  - the alignment output is now prettier and makes more sense when there have
+    been lines ignored
+

@@ -19,3 +19,7 @@ Revision history for Text-Same
   - the alignment output is now prettier and makes more sense when there have
     been lines ignored
 
+0.04
+
+  - fixed match test failure
+

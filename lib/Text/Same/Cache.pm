@@ -28,7 +28,7 @@ use Carp;
 use vars qw($VERSION);
 $VERSION = '0.04';
 
-use Text::Same::ChunkedSource;
+use Text::Same::FileChunkedSource;
 
 =head2 new
 
@@ -70,7 +70,7 @@ sub get
     open F, "<$filename" or die "$!: $filename\n";
     @lines = map {chomp; $_} (<F>);
   }
-  return new Text::Same::ChunkedSource(name=>$filename, chunks=>\@lines);
+  return new Text::Same::FileChunkedSource(name=>$filename, chunks=>\@lines);
 }
 
 =head1 AUTHOR

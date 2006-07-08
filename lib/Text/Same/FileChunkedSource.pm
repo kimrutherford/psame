@@ -1,16 +1,15 @@
 =head1 NAME
 
-Text::Same::ChunkedSource
+Text::Same::FileChunkedSource
 
 =head1 DESCRIPTION
 
 Objects of this class represent a source of chunks (generally lines)
-in a source (generally a file).  The "chunks" could potentially be
-paragraphs or sentences.
+in a file.  The "chunks" could potentially be paragraphs or sentences.
 
 =head1 SYNOPSIS
 
-my $source = new Text::Same::ChunkedSource(chunks->\@chunks)
+my $source = new Text::Same::FileChunkedSource(chunks->\@chunks)
 
 =head1 METHODS
 
@@ -19,25 +18,28 @@ underscore.
 
 =cut
 
-package Text::Same::ChunkedSource;
+package Text::Same::FileChunkedSource;
 
 use warnings;
 use strict;
 use Carp;
 
-use vars qw($VERSION);
+use vars qw($VERSION @ISA);
 $VERSION = '0.04';
 
 use Digest::MD5 qw(md5);
 
 use Text::Same::Util;
+use Text::Same::ChunkedSource;
+
+@ISA = qw(Text::Same::ChunkedSource);
 
 =head2 new
 
  Title   : new
- Usage   : $source = new Text::Same::ChunkedSource(chunks->\@chunks)
+ Usage   : $source = new Text::Same::FileChunkedSource(chunks->\@chunks)
  Function: Creates a new ChunkedSource object from an array
- Returns : A Text::Same::ChunkedSource object
+ Returns : A Text::Same::FileChunkedSource object
  Args    : chunks - an array of strings
 
 =cut

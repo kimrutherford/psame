@@ -166,14 +166,14 @@ of text (with added line numbers):
 
 Using the default settings, B<psame> will report this:
 
-match 2..6==1..6
-  The parrot sketch -
-   'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's
-   shuffled off 'is mortal coil,     =  shuffled off 'is mortal coil,
-   run down the curtain and joined   =  run down the curtain and joined
-   the bleedin' choir invisible!     =  the bleedin' choir invisible!
-                                     >
-   THIS IS AN EX-PARROT!             =  This is an ex-parrot!
+ match 2..6==1..6
+   The parrot sketch -
+    'E's kicked the bucket, 'e's      =  'E's kicked the bucket, 'e's
+    shuffled off 'is mortal coil,     =  shuffled off 'is mortal coil,
+    run down the curtain and joined   =  run down the curtain and joined
+    the bleedin' choir invisible!     =  the bleedin' choir invisible!
+                                      >
+    THIS IS AN EX-PARROT!             =  This is an ex-parrot!
 
 which indicates that there are five lines from B<text_1> (ie. lines 2
 to 6) that match six lines from text_2 (ie. 1 to 6).  By default

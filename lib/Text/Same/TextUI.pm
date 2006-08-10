@@ -48,7 +48,7 @@ use Text::Same::Util;
            a non matching region (range of chunk indexes) in a particular
            source
  Args    : %options - settings to use
-           $source - the ChunkedSource that this non-match came from (for 
+           $source - the ChunkedSource that this non-match came from (for
                      looking up the actual chunks/lines for the range of
                      indexes)
            $non_match - a Range object representing the non-matching chunks
@@ -70,7 +70,7 @@ sub draw_non_match
 
   my $padding = "    ";
 
-  for my $match_chunk (@match_chunks) {    
+  for my $match_chunk (@match_chunks) {
     $match_chunk = substr $match_chunk, 0, $screen_width - length $padding;
     $ret .= $padding;
     $ret .= $match_chunk;
@@ -147,10 +147,12 @@ sub _draw_match_side_by_side
 
   for ($i = 0; $i<scalar(@match_chunks1) or $i<scalar(@match_chunks2); $i++) {
     my $left_chunk = $match_chunks1[$i];
-    my $left_ignorable = 
+    $left_chunk =~ s/\t/    /g;
+    my $left_ignorable =
       defined $left_chunk && is_ignorable($options, $left_chunk);
     my $right_chunk = $match_chunks2[$i];
-    my $right_ignorable = 
+    $right_chunk =~ s/\t/    /g;
+    my $right_ignorable =
       defined $right_chunk && is_ignorable($options, $right_chunk);
 
     my $indicator;
@@ -233,7 +235,9 @@ sub _get_start_context
     if ($i < 0) {
       push @ret, undef;
     } else {
-      push @ret, ($source->get_all_chunks)[$i];
+      my $text = ($source->get_all_chunks)[$i];
+      $text =~ s/\t/   /g;
+      push @ret, $text;
     }
   }
 
@@ -253,7 +257,9 @@ sub _get_end_context
     if ($i > $source->get_all_chunks_count - 1) {
       push @ret, undef;
     } else {
-      push @ret, ($source->get_all_chunks)[$i];
+      my $text = ($source->get_all_chunks)[$i];
+      $text =~ s/\t/   /g;
+      push @ret, $text;
     }
   }
 

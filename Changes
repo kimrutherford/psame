@@ -23,3 +23,8 @@ Revision history for Text-Same
 
   - fixed match test failure
 
+0.05
+
+  - small documentation fixes
+  - better display of files with tabs
+

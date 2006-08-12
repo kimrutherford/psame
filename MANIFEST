@@ -13,6 +13,7 @@ lib/Text/Same/MatchMap.pm
 lib/Text/Same/Range.pm
 lib/Text/Same/TextUI.pm
 lib/Text/Same/Util.pm
+lib/Text/Same/FileChunkedSource.pm
 bin/psame
 etc/increment_mod_version.pl
 t/00-load.t

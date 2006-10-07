@@ -7,7 +7,7 @@ Revision history for Text-Same
 0.02
 
   - documentation fixes
-  - the opions set with the -a flag can now be overridden
+  - the options set with the -a flag can now be overridden
   - the -n option now produces output less than the terminal width
 
 0.03
@@ -27,4 +27,8 @@ Revision history for Text-Same
 
   - small documentation fixes
   - better display of files with tabs
+
+0.06
+
+  - documentation fixes
 

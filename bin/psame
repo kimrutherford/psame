@@ -186,7 +186,7 @@ ignored when comparing files.  The "=" symbol indicates an match
 between two lines.  The ">" indicates that B<text_2> has an extra
 blank line that has been ignored during the comparison.
 
-=head2 Case sensitivity
+=head2 Case sensitivity and ignoring blank lines
 
 Adding the B<-B> parameter will produce this output:
 
@@ -220,6 +220,7 @@ is the output:
    THIS IS AN EX-PARROT!
                                         This is an ex-parrot!
 
+Note that the "This is an ex-parrot!" line doesn't match now.
 
 =head1 NON-MATCHES
 

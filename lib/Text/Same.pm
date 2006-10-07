@@ -35,7 +35,7 @@ use Exporter;
 @ISA = qw( Exporter );
 @EXPORT = qw( compare );
 
-$VERSION = '0.05';
+$VERSION = '0.06';
 
 use Text::Same::Match;
 use Text::Same::ChunkPair;

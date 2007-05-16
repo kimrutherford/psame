@@ -402,7 +402,7 @@ if (@ARGV == 1) {
 }
 
 if (!defined $options{term_width}) {
-  $options{term_width} = eval "require Term::Size; Term::Size::chars()";
+  $options{term_width} = eval {require Term::Size; Term::Size::chars()};
 
   if ($@ or $options{term_width} == 0) {
     # pick a default

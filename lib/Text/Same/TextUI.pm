@@ -31,7 +31,7 @@ use vars qw($VERSION @EXPORT @ISA);
 @ISA = qw( Exporter );
 @EXPORT = qw( draw_match draw_non_match );
 
-use warnings;
+use warnings FATAL => 'all';
 use strict;
 use Carp;
 
@@ -60,7 +60,11 @@ sub draw_non_match
   my $options = shift;
   my $source = shift;
   my $non_match_range = shift;
-  my $screen_width = $options->{term_width} - 2;
+  my $screen_width = 78;
+
+  if (defined $options->{term_width}) {
+    $screen_width = $options->{term_width} - 2;
+  }
 
   my $start = $non_match_range->start();
   my $end = $non_match_range->end();
@@ -113,7 +117,7 @@ sub _draw_match_side_by_side
   my $min2 = $match->min2;
   my $max2 = $match->max2;
 
-  my $width = $options->{term_width};
+  my $width = _get_term_width($options);
 
   my $half_width = int($width / 2 - 6);
 
@@ -147,11 +151,15 @@ sub _draw_match_side_by_side
 
   for ($i = 0; $i<scalar(@match_chunks1) or $i<scalar(@match_chunks2); $i++) {
     my $left_chunk = $match_chunks1[$i];
-    $left_chunk =~ s/\t/    /g;
+    if (defined $left_chunk) {
+      $left_chunk =~ s/\t/    /g;
+    }
     my $left_ignorable =
       defined $left_chunk && is_ignorable($options, $left_chunk);
     my $right_chunk = $match_chunks2[$i];
-    $right_chunk =~ s/\t/    /g;
+    if ($right_chunk) {
+      $right_chunk =~ s/\t/    /g;
+    }
     my $right_ignorable =
       defined $right_chunk && is_ignorable($options, $right_chunk);
 
@@ -164,7 +172,7 @@ sub _draw_match_side_by_side
       }
     } else {
       if (!$left_ignorable && !$right_ignorable) {
-        $indicator = "=";
+        $indicator = "|";
       } else {
         if ($left_ignorable) {
           # insert a blank on the right and try again
@@ -305,6 +313,16 @@ sub _draw_range_and_context
   }
 
   return $ret;
+}
+
+sub _get_term_width
+{
+  my $options = shift;
+  if (defined $options->{term_width}) {
+    return $options->{term_width};
+  } else {
+    return 80;
+  }
 }
 
 =head1 AUTHOR

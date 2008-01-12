@@ -1,35 +1,12 @@
-#!perl -T
+#!perl
 
 use strict;
-use warnings;
+use warnings FATAL => 'all';
 
-use Test::More tests => 39;
+use Test::More tests => 100;
 
 use Text::Same;
-
-my @t1 = qw{b c};
-my @t2 = qw{b c b c};
-
-my $options = {};
-my $matchmap = compare $options, \@t1, \@t2;
-my @matches = $matchmap->matches;
-
-ok(scalar(@matches) == 2);
-
-my @sorted_matches = sort {
-  my $min1_cmp = $a->min1 <=> $b->min1;
-  if ($min1_cmp == 0) {
-    $a->min2 <=> $b->min2;
-  } else {
-    $min1_cmp;
-  }
-} @matches;
-
-my $match1 = $sorted_matches[0];
-my $match2 = $sorted_matches[1];
-
-ok($match1->score() == 4);
-ok($match2->score() == 4);
+use Text::Same::TextUI;
 
 my @test_data = (
                  {
@@ -118,16 +95,38 @@ my @test_data = (
 my $count = 0;
 
 for my $test_data (@test_data) {
-  my $dir = $test_data->{dir};
-  my $file1 = "t/data/$dir/file1";
-  my $file2 = "t/data/$dir/file2";
+  for my $draw_match_flag (0, 1) {
+    my $options = $test_data;
+    $options->{side_by_side} = $draw_match_flag;
+    my $dir = $test_data->{dir};
+    my $file1 = "t/data/$dir/file1";
+    my $file2 = "t/data/$dir/file2";
 
-  my $options = $test_data;
-  my $matchmap = compare $options, $file1, $file2;
+    my $matchmap = compare $options, $file1, $file2;
 
-  ok(scalar($matchmap->matches) == $test_data->{match_count});
-  ok(scalar($matchmap->source1_non_matches) == $test_data->{unmatched1});
-  ok(scalar($matchmap->source2_non_matches) == $test_data->{unmatched2});
+    my @matches = $matchmap->matches;
 
-  $count++;
+    for my $match (@matches) {
+      my $match_out = draw_match($options, $match);
+      ok(length $match_out > 0);
+    }
+
+    my @source1_non_matches = $matchmap->source1_non_matches;
+    my @source2_non_matches = $matchmap->source2_non_matches;
+
+    for my $non_match (@source1_non_matches) {
+      my $non_match_1_out = draw_non_match($options, $matchmap->source1,
+                                           $non_match);
+      ok(length $non_match_1_out > 0);
+    }
+    for my $non_match (@source2_non_matches) {
+      my $non_match_2_out = draw_non_match($options, $matchmap->source2,
+                                           $non_match);
+      ok(length $non_match_2_out > 0);
+    }
+
+    $count++;
+  }
 }
+
+print "$count\n";

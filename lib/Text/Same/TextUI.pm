@@ -35,7 +35,7 @@ use warnings FATAL => 'all';
 use strict;
 use Carp;
 
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 use Text::Same::ChunkedSource;
 use Text::Same::Util;

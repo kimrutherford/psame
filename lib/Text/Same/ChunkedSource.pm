@@ -26,7 +26,7 @@ use strict;
 use Carp;
 
 use vars qw($VERSION);
-$VERSION = '0.06';
+$VERSION = '0.07';
 
 use Digest::MD5 qw(md5);
 

@@ -78,6 +78,7 @@ sub _is_simple
 sub is_ignorable
 {
   my ($options, $text) = @_;
+  return 1 if !defined $text;
   return (($options->{ignore_blanks} && $text =~ m/^\s*$/) ||
           _is_simple($options, $text));
 }

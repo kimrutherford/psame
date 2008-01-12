@@ -21,6 +21,7 @@ t/match.t
 t/chunked_source.t
 t/pod.t
 t/pod-coverage.t
+t/textui.t
 t/data/test1/file1
 t/data/test1/file2
 t/data/test2/file1
@@ -43,3 +44,5 @@ t/data/test10/file1
 t/data/test10/file2
 t/data/test11/file1
 t/data/test11/file2
+t/data/test12/file1
+t/data/test12/file2
